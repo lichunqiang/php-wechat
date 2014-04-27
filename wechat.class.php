@@ -146,25 +146,25 @@ class Wechat
     {
         $echoStr = isset($_GET["echostr"]) ? $_GET["echostr"]: '';
         if ($return) {
-        		if ($echoStr) {
-        			if ($this->checkSignature()) 
-        				return $echoStr;
-        			else
-        				return false;
-        		} else 
-        			return $this->checkSignature();
+			if ($echoStr) {
+				if ($this->checkSignature()) 
+					return $echoStr;
+				else
+					return false;
+			} else 
+				return $this->checkSignature();
         } else {
-	        	if ($echoStr) {
-	        		if ($this->checkSignature())
-	        			die($echoStr);
-	        		else 
-	        			die('no access');
-	        	}  else {
-	        		if ($this->checkSignature())
-	        			return true;
-	        		else
-	        			die('no access');
-	        	}
+			if ($echoStr) {
+				if ($this->checkSignature())
+					die($echoStr);
+				else 
+					die('no access');
+			}  else {
+				if ($this->checkSignature())
+					return true;
+				else
+					die('no access');
+			}
         }
         return false;
     }
@@ -204,11 +204,18 @@ class Wechat
 			return call_user_func($this->_logcallback,$log);
 		}
     }
-	
+	/**
+	 *	缓存方法
+	 * 	@param string $key 缓存key
+	 * 	@param string|array $data 缓存值
+	 * 	@param int $expire  过期时间
+	 *	@return boolean
+	 */ 
 	private function cache($key, $data, $expire = 1800) {
 		if(function_exists($this->_cachecallback)) {
 			return call_user_func($this->_cachecallback, $key, $data, $expire);
 		}
+		return false;
     }
     /**
      * 获取微信服务器发来的信息
@@ -379,8 +386,8 @@ class Wechat
 	public function getRevVideo(){
 		if (isset($this->_receive['MediaId'])){
 			return array(
-					'mediaid'=>$this->_receive['MediaId'],
-					'thumbmediaid'=>$this->_receive['ThumbMediaId']
+				'mediaid'=>$this->_receive['MediaId'],
+				'thumbmediaid'=>$this->_receive['ThumbMediaId']
 			);
 		} else
 			return false;
@@ -941,7 +948,7 @@ class Wechat
 	public function createGroup($name){
 		if (!$this->access_token && !$this->checkAuth()) return false;
 		$data = array(
-				'group'=>array('name'=>$name)
+			'group'=>array('name'=>$name)
 		);
 		$result = $this->http_post(self::API_URL_PREFIX.self::GROUP_CREATE_URL.'access_token='.$this->access_token,self::json_encode($data));
 		if ($result)
@@ -966,7 +973,7 @@ class Wechat
 	public function updateGroup($groupid,$name){
 		if (!$this->access_token && !$this->checkAuth()) return false;
 		$data = array(
-				'group'=>array('id'=>$groupid,'name'=>$name)
+			'group'=>array('id'=>$groupid, 'name'=>$name)
 		);
 		$result = $this->http_post(self::API_URL_PREFIX.self::GROUP_UPDATE_URL.'access_token='.$this->access_token,self::json_encode($data));
 		if ($result)
@@ -991,8 +998,8 @@ class Wechat
 	public function updateGroupMembers($groupid,$openid){
 		if (!$this->access_token && !$this->checkAuth()) return false;
 		$data = array(
-				'openid'=>$openid,
-				'to_groupid'=>$groupid
+			'openid'=>$openid,
+			'to_groupid'=>$groupid
 		);
 		$result = $this->http_post(self::API_URL_PREFIX.self::GROUP_MEMBER_UPDATE_URL.'access_token='.$this->access_token,self::json_encode($data));
 		if ($result)
@@ -1137,7 +1144,7 @@ class Wechat
 		if(empty($msg_id)) return false;
 		if(!$this->access_token && !$this->checkAuth()) return false;
 		$data = array(
-			'msg_id' => $msg_id
+			'msg_id' => $msg_id //this is different from offical doc,and this is valid.
 		);
 		$result = $this->http_post(self::API_URL_PREFIX . self::MESSAGE_DELETE_URL . 'access_token=' . $this->access_token, self::json_encode($data));
 		if($result) {
@@ -1283,26 +1290,26 @@ class Wechat
 	 * @return string
 	 */
 	public function createPackage($out_trade_no,$body,$total_fee,$notify_url,$spbill_create_ip,$fee_type=1,$bank_type="WX",$input_charset="UTF-8",$time_start="",$time_expire="",$transport_fee="",$product_fee="",$goods_tag="",$attach=""){
-			$arrdata = array("bank_type" => $bank_type, "body" => $body, "partner" => $this->partnerid, "out_trade_no" => $out_trade_no, "total_fee" => $total_fee, "fee_type" => $fee_type, "notify_url" => $notify_url, "spbill_create_ip" => $spbill_create_ip, "input_charset" => $input_charset);
-			if ($time_start)  $arrdata['time_start'] = $time_start;
-			if ($time_expire)  $arrdata['time_expire'] = $time_expire;
-			if ($transport_fee)  $arrdata['transport_fee'] = $transport_fee;
-			if ($product_fee)  $arrdata['product_fee'] = $product_fee;
-			if ($goods_tag)  $arrdata['goods_tag'] = $goods_tag;
-			if ($attach)  $arrdata['attach'] = $attach;
-			ksort($arrdata);
-			$paramstring = "";
-			foreach($arrdata as $key => $value)
-			{
-			if(strlen($paramstring) == 0)
-				$paramstring .= $key . "=" . $value;
-				else
-				$paramstring .= "&" . $key . "=" . $value;
-			}
-			$stringSignTemp = $paramstring . "&key=" . $this->partnerkey;
-			$signValue = strtoupper(md5($stringSignTemp));
-			$package = http_build_query($arrdata) . "&sign=" . $signValue;
-			return $package;
+		$arrdata = array("bank_type" => $bank_type, "body" => $body, "partner" => $this->partnerid, "out_trade_no" => $out_trade_no, "total_fee" => $total_fee, "fee_type" => $fee_type, "notify_url" => $notify_url, "spbill_create_ip" => $spbill_create_ip, "input_charset" => $input_charset);
+		if ($time_start)  $arrdata['time_start'] = $time_start;
+		if ($time_expire)  $arrdata['time_expire'] = $time_expire;
+		if ($transport_fee)  $arrdata['transport_fee'] = $transport_fee;
+		if ($product_fee)  $arrdata['product_fee'] = $product_fee;
+		if ($goods_tag)  $arrdata['goods_tag'] = $goods_tag;
+		if ($attach)  $arrdata['attach'] = $attach;
+		ksort($arrdata);
+		$paramstring = "";
+		foreach($arrdata as $key => $value)
+		{
+		if(strlen($paramstring) == 0)
+			$paramstring .= $key . "=" . $value;
+			else
+			$paramstring .= "&" . $key . "=" . $value;
+		}
+		$stringSignTemp = $paramstring . "&key=" . $this->partnerkey;
+		$signValue = strtoupper(md5($stringSignTemp));
+		$package = http_build_query($arrdata) . "&sign=" . $signValue;
+		return $package;
 	}
 	
 	/**
@@ -1348,14 +1355,14 @@ class Wechat
 	public function sendPayDeliverNotify($openid,$transid,$out_trade_no,$status=1,$msg='ok'){
 		if (!$this->access_token && !$this->checkAuth()) return false;
 		$postdata = array(
-				"appid"=>$this->appid,
-				"appkey"=>$this->paysignkey,
-				"openid"=>$openid,
-				"transid"=>strval($transid),
-				"out_trade_no"=>strval($out_trade_no),
-				"deliver_timestamp"=>strval(time()),
-				"deliver_status"=>strval($status),
-				"deliver_msg"=>$msg,
+			"appid"=>$this->appid,
+			"appkey"=>$this->paysignkey,
+			"openid"=>$openid,
+			"transid"=>strval($transid),
+			"out_trade_no"=>strval($out_trade_no),
+			"deliver_timestamp"=>strval(time()),
+			"deliver_status"=>strval($status),
+			"deliver_msg"=>$msg,
 		);
 		$postdata['app_signature'] = $this->getSignature($postdata);
 		$postdata['sign_method'] = 'sha1';
@@ -1383,10 +1390,10 @@ class Wechat
 		if (!$this->access_token && !$this->checkAuth()) return false;
 		$sign = strtoupper(md5("out_trade_no=$out_trade_no&partner={$this->partnerid}&key={$this->partnerkey}"));
 		$postdata = array(
-				"appid"=>$this->appid,
-				"appkey"=>$this->paysignkey,
-				"package"=>"out_trade_no=$out_trade_no&partner={$this->partnerid}&sign=$sign",
-				"timestamp"=>strval(time()),
+			"appid"=>$this->appid,
+			"appkey"=>$this->paysignkey,
+			"package"=>"out_trade_no=$out_trade_no&partner={$this->partnerid}&sign=$sign",
+			"timestamp"=>strval(time()),
 		);
 		$postdata['app_signature'] = $this->getSignature($postdata);
 		$postdata['sign_method'] = 'sha1';
@@ -1422,11 +1429,11 @@ class Wechat
 		}
 		$url = htmlspecialchars_decode($url);
 		$arrdata = array(
-				'appid'=>$this->appid,
-				'url'=>$url,
-				'timestamp'=>strval($timeStamp),
-				'noncestr'=>$nonceStr,
-				'accesstoken'=>$user_token
+			'appid'=>$this->appid,
+			'url'=>$url,
+			'timestamp'=>strval($timeStamp),
+			'noncestr'=>$nonceStr,
+			'accesstoken'=>$user_token
 		);
 		return $this->getSignature($arrdata);
 	}
