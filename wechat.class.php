@@ -99,9 +99,11 @@ class Wechat
 	private $_receive;
 	public $debug =  false;
 	public $errCode = 40001;
-	public $errMsg = "no access";
+	public $errMsg = "no access!";
 	private $_logcallback;
 	private $_cachecallback;
+	private $allow_media_types = array('image', 'voice', 'video', 'thumb');
+	private $custom_msg_types = array('text', 'image', 'voice', 'video', 'music', 'news');
 	
 	public function __construct($options)
 	{
@@ -627,6 +629,7 @@ class Wechat
 			$appid = $this->appid;
 			$appsecret = $this->appsecret;
 		}
+		if('' !== $this->access_token) return $this->access_token;
 		//TODO: get the cache access_token
 		$result = $this->http_get(self::API_URL_PREFIX.self::AUTH_URL.'appid='.$appid.'&secret='.$appsecret);
 		if ($result)
@@ -653,6 +656,7 @@ class Wechat
 	public function resetAuth($appid=''){
 		$this->access_token = '';
 		//TODO: remove cache
+		$this->cache('access_token', '', -1);
 		return true;
 	}
 		
@@ -802,6 +806,11 @@ class Wechat
 	 * @return boolean||array
 	 */
 	public function uploadMedia($media_source, $type){
+		//TODO::add check file size func, because the api frequence
+		if(!in_array($type, $this->allow_media_types)) {
+			$this->errMsg = '错误的文件类型';
+			return false;
+		}
 		if (!$this->access_token && !$this->checkAuth()) return false;
 		$data = array('media' => $media_source);
 		$result = $this->http_post(self::FILE_API_URL_PREFIX . self::MEDIA_UPLOAD_URL . 'access_token=' . $this->access_token.'&type=' . $type, $data, TRUE);
@@ -815,6 +824,7 @@ class Wechat
 			//{"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
 			return $json;
 		}
+		$this->errMsg = '上传文件错误';
 		return false;
 	}	
 	
@@ -1040,11 +1050,22 @@ class Wechat
 	}	
 	/**
 	 * 发送客服消息
-	 * @param array $data 消息结构{"touser":"OPENID","msgtype":"news","news":{...}}
+	 * @param string $touser 接受者的openid
+	 * @param string $msgtype 消息类型：text|image|voice|video|music|news
+	 * @param array $msgdata 消息内容,根据消息类型不同构造不同
 	 * @return boolean|array
 	 */
-	public function sendCustomMessage($data){
+	public function sendCustomMessage($touser, $msgtype, $msgdata){
+		if(!in_array($msgtype, $this->custom_msg_types)) {
+			$this->errMsg = '不支持的消息类型';
+			return false;
+		}
 		if (!$this->access_token && !$this->checkAuth()) return false;
+		$data = array(
+			'touser' => $touser,
+			'msgtype' => $msgtype,
+			$msgtype => $msgdata
+		);
 		$result = $this->http_post(self::API_URL_PREFIX.self::CUSTOM_SEND_URL.'access_token='.$this->access_token,self::json_encode($data));
 		if ($result)
 		{
@@ -1061,7 +1082,7 @@ class Wechat
 	
 	/**
 	 * 上传图文消息素材
-	 * @param array $da 图文消息的media id
+	 * @param array $articles 图文消息
 	 * @return false|array
 	 */
 	function uploadArticle($articles = array()) {

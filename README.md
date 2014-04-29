@@ -240,6 +240,11 @@ HTML部分请看test/test3.php, 主要是定时ajax查询是否已经授权成�
 2014.04.23
 * 增加Wechat::getUserGroup($openid) 根据用户的openid获取用户所在分组
 
+2014.04.30
+* 修改Wechat::sendCustomMessage($touser, $msgtype, $msgdata)
+* 增加Wechat::$allow_media_types 允许上传多媒体的文件类型
+* 增减Wechat::$custom_msg_types 允许发送客服消息的消息类型
+* 在Wechat::sendCustomMessage 和 Wechat::updateMedia 增加type判断
 
 License
 -------
