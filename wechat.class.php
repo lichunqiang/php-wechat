@@ -746,7 +746,7 @@ class Wechat
 		if ($result)
 		{
 			$json = json_decode($result,true);
-			if (!$json || !empty($json['errcode'])) {
+			if (!$json || !isset($json['errcode']) || 0 != $json['errcode']) {
 				$this->errCode = $json['errcode'];
 				$this->errMsg = $json['errmsg'];
 				return false;
@@ -786,7 +786,7 @@ class Wechat
 		if ($result)
 		{
 			$json = json_decode($result,true);
-			if (!$json || !empty($json['errcode'])) {
+			if (!$json || !isset($json['errcode']) || 0 != $json['errcode']) {
 				$this->errCode = $json['errcode'];
 				$this->errMsg = $json['errmsg'];
 				return false;

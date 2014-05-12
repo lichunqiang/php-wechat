@@ -1,5 +1,4 @@
 <?php
-
 function debug_print($var, $nfo='DEBUG', $htm=false, $ret=false) { 
     $var_str = print_r($var, true); 
     if ($htm !== false) { $var_str = htmlentities($var_str); } 
@@ -12,4 +11,22 @@ function debug_print($var, $nfo='DEBUG', $htm=false, $ret=false) {
     if ($ret !== false) { $result = $outstr; } 
     else { print $outstr; $result = true; } 
     return $result; 
+}
+
+function formatbytes($file, $type)
+{
+   switch($type){
+      case "KB":
+         $filesize = filesize($file) * .0009765625; // bytes to KB
+      break;
+      case "MB":
+         $filesize = (filesize($file) * .0009765625) * .0009765625; // bytes to MB
+      break;
+      case "GB":
+         $filesize = ((filesize($file) * .0009765625) * .0009765625) * .0009765625; // bytes to GB
+      break;
+   }
+   if($filesize <= 0){
+      return $filesize = 'unknown file size';}
+   else{return round($filesize, 2).' '.$type;}
 }
