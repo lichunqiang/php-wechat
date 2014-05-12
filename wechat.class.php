@@ -53,6 +53,7 @@ class Wechat
 	const MSGTYPE_NEWS = 'news';
 	const MSGTYPE_VOICE = 'voice';
 	const MSGTYPE_VIDEO = 'video';
+	const MSYTYPE_CUSTOMER = 'transfer_customer_service';
 	const API_URL_PREFIX = 'https://api.weixin.qq.com/cgi-bin';
 	const FILE_API_URL_PREFIX = 'http://file.api.weixin.qq.com/cgi-bin';
 	const AUTH_URL = '/token?grant_type=client_credential&';
@@ -560,7 +561,27 @@ class Wechat
 		else
 			echo $xmldata;
 	}
-	
+
+	/**
+	 * 
+	 * 回复微信服务器, 接入客服系统
+	 * @example $this->customerServiceReply();
+	 * @param bool $return 是否返回信息而不抛出到浏览器 默认:否
+	 */
+	public function customerServiceReply($return = false)
+	{
+		$msg = array(
+			'ToUserName'   => $this->args['target'],
+			'FromUserName' => $this->args['source'],
+			'MsgType'	   => self::MSYTYPE_CUSTOMER,
+			'CreateTime'   => time(),
+		);
+		$xmldata=  $this->xml_encode($msg);
+		if ($return)
+			return $xmldata;
+		else
+			echo $xmldata;
+	}	
 
 	/**
 	 * GET 请求
