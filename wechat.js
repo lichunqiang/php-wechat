@@ -4,7 +4,7 @@
  * @contact dodgepudding@gmail.com
  * @link http://blog.4wer.com/wechat-timeline-share
  * @version 1.1
- * 
+ *
  * 自定义分享使用：
  * WeixinJS.hideOptionMenu() 隐藏右上角按钮
  * WeixinJS.hideToolbar() 隐藏工具栏
@@ -18,7 +18,7 @@
 	   desc:"描述",
 	   fakeid:"",
 	   prepare:function(argv){
-	   if (typeof argv.shareTo!='undefined') 
+	   if (typeof argv.shareTo!='undefined')
 	   	switch(argv.shareTo) {
 	   		case 'friend':
 	   		//发送给朋友
@@ -74,7 +74,7 @@
 	   	if (res.err_msg=='send_app_msg:ok') {
 	   		//todo:func1();
 	   		alert(res.err_desc);
-	   	}   	
+	   	}
 	   }
 	};
  */
@@ -104,6 +104,19 @@ WeixinJS.closeWindow = function() {
 	if (typeof WeixinJSBridge!='undefined') WeixinJSBridge.invoke("closeWindow", {});
 };
 
+/**
+ * 调出微信内图片预览scrollview
+ * @param array urls 图片url数组
+ * @param string current 当前图片url
+ */
+WeixinJS.imagePreview = function(urls,current) {
+	if (typeof WeixinJSBridge!='undefined')
+		WeixinJSBridge.invoke("imagePreview", {
+			current: current,
+			urls: urls
+		});
+};
+
 WeixinJS.payCallback = function(appId,package,timeStamp,nonceStr,signType,paySign,callback){
 	if (typeof WeixinJSBridge!='undefined')
 	WeixinJSBridge.invoke('getBrandWCPayRequest',{
@@ -113,7 +126,7 @@ WeixinJS.payCallback = function(appId,package,timeStamp,nonceStr,signType,paySig
         "package" : package.toString(),
         "signType" : signType.toString(),
         "paySign" : paySign.toString()
-        
+
     },function(res){
     	// res.err_msg == "get_brand_wcpay_request:ok" return true;
     	// res.err_msg == "get_brand_wcpay_request:cancel" return false;
@@ -139,6 +152,7 @@ WeixinJS.editAddress = function(appId,addrSign,timeStamp,nonceStr,callback){
 };
 
 (function(){
+	if (typeof dataForWeixin=="undefined") return;
    var onBridgeReady=function(){
    WeixinJSBridge.on('menu:share:appmessage', function(argv){
 	  (dataForWeixin.prepare)(argv);
