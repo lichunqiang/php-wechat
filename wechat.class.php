@@ -73,6 +73,7 @@ class Wechat
 	const QRCODE_IMG_URL='https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=';
 	const USER_GET_URL='/user/get?';
 	const USER_INFO_URL='/user/info?';
+	const USER_UPDATEREMARK_URL='/user/info/updateremark?';
 	const USER_GROUP_URL='/groups/getid?';
 	const GROUP_GET_URL='/groups/get?';
 	const GROUP_CREATE_URL='/groups/create?';
@@ -365,13 +366,14 @@ class Wechat
 	 * 获取接收事件推送
 	 */
 	public function getRevEvent(){
-		if (isset($this->_receive['Event'])){
-			return array(
-				'event'=>$this->_receive['Event'],
-				'key'=>$this->_receive['EventKey'],
-			);
-		} else
-			return false;
+		$array = array();
+		if(isset($this->_receive['Event'])){
+			$array['event'] = $this->_receive['Event'];
+		}
+		if(isset($this->_receive['EventKey'])) {
+			$array['key'] = $this->_receive['EventKey'];
+		}
+		return $array;
 	}
 
 	/**
@@ -420,6 +422,31 @@ class Wechat
     		return false;
     	}
     }
+
+    /**
+    * 获取模板消息ID
+    * 和普通消息的MgsId不同
+    * @return mixed
+    */
+   	public function getRevTplMsgID()
+   	{
+   		if(isset($this->_receive['MsgID'])) {
+   			return $this->_receive['MsgID'];
+   		}
+   		return false;
+   	}
+
+   	/**
+   	* 获取模板消息发送状态
+   	* @return mixed
+   	*/
+   	public function getRevStatus()
+   	{
+   		if(isset($this->_receive['Status'])) {
+   			return $this->_receive['Status'];
+   		}
+   		return false;
+   	}
 
 	public static function xmlSafeStr($str)
 	{
@@ -826,6 +853,7 @@ class Wechat
 	 *		语音（voice）：256K，播放长度不超过60s，支持AMR\MP3格式
 	 *		视频（video）：1MB，支持MP4格式
 	 *		缩略图（thumb）：64KB，支持JPG格式
+	 * 注意：数组的键值任意，但文件名前必须加@，使用单引号以避免本地路径斜杠被转义
 	 * @param string $media_id 媒体文件id
 	 * @param string $type 媒体文件类型: image, voice, video, thumb
 	 * @return boolean||array
@@ -1049,6 +1077,7 @@ class Wechat
 		}
 		return false;
 	}
+
 	/**
 	* 获取关注者所在分组
 	* @param string $openid
@@ -1073,6 +1102,31 @@ class Wechat
 		}
 		return false;
 	}
+
+	/**
+	* 设置用户备注名
+	* @param array  this is test
+	* @return string
+	*/
+	public function updateUserRemark($openid, $remark)
+	{
+		if (!$this->access_token && !$this->checkAuth()) return false;
+
+		$data = array('openid' => $openid, 'remark' => $remark);
+		$result = $this->http_post(self::API_URL_PREFIX.self::USER_UPDATEREMARK_URL.'access_token='.$this->access_token,
+									self::json_encode($data));
+		if($result) {
+			$json = json_decode($result, true);
+			if(!$json || !empty($json['errcode'])) {
+				$this->errCode = $json['errcode'];
+				$this->errMsg = $json['errmsg'];
+				return false;
+			}
+			return $json;
+		}
+		return false;
+	}
+
 	/**
 	 * 发送客服消息
 	 * @param string $touser 接受者的openid
@@ -1334,13 +1388,7 @@ class Wechat
 		$result = $this->http_post( self::API_URL_PREFIX . self::MESSAGE_SENDTEMPLATE_URL . 'access_token=' . $this->access_token,
 									self::json_encode($data));
 		if($result) {
-			$json = json_decode($result, true);
-			if(!$json || !empty($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
-				return false;
-			}
-			return $json;
+			return json_decode($result, true);
 		}
 		return false;
 	}
