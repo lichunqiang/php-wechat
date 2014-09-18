@@ -1,0 +1,3 @@
+[submodule "WeixinApi"]
+	path = WeixinApi
+	url = git@github.com:zxlie/WeixinApi.git
