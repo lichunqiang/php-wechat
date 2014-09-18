@@ -25,7 +25,7 @@ interface PaymentInterface
 	/**
 	 * 发货API
 	 */
-	const DELIVERY_URL_SUFFIX = '/deliverynotify?';
+	const DELIVERY_URL_SUFFIX = '/delivernotify?';
 
 	/**
 	 * 订单查询

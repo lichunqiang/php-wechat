@@ -91,6 +91,7 @@ class Helper
 		curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
 		$sContent = curl_exec($oCurl);
 		$aStatus = curl_getinfo($oCurl);
+		var_dump($aStatus);
 		curl_close($oCurl);
 		if(intval($aStatus["http_code"])==200){
 			return $sContent;
@@ -168,6 +169,8 @@ class Helper
 
     /**
      * 根据数值生成URL键值对格式的字符串
+     * 微信规定urlencode编码需要将空格转化为%20而不是+,所以这里使用rawurlencode
+     *
      * @param array  $param 参数
      * @param bool $urlencode 是否对值进行url编码
      * @return string
@@ -178,7 +181,7 @@ class Helper
     	foreach ($param as $key => $value) {
     		if(null !== $value && 'null' != $value
     			&& '' != $value && 'sign' != $key) {
-    			$buff[] = $key . '=' . ($urlencode ? urlencode($value) : $value);
+    			$buff[] = $key . '=' . ($urlencode ? rawurlencode($value) : $value);
     		}
     	}
     	return implode('&', $buff);
@@ -194,7 +197,7 @@ class Helper
     {
     	$buff = array();
     	foreach ($param as $key => $value) {
-    		$buff[] = $key . '=' . ($urlencode ? urlencode($value) : $value);
+    		$buff[] = $key . '=' . ($urlencode ? rawurlencode($value) : $value);
     	}
     	return implode('&', $buff);
     }

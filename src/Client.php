@@ -125,7 +125,7 @@ class Client implements ClientInterface
 			throw new RuntimeException('access_token不能为空');
 		}
 		$body = array('media' => $media);
-		$url = self::FILE_API_URL_PREFIX . self::MEDIA_UPLOAD_URL . 'access_token=' . $this->access_token . '&type=' $type;
+		$url = self::FILE_API_URL_PREFIX . self::MEDIA_UPLOAD_URL . 'access_token=' . $this->access_token . '&type=' . $type;
 		$result = Helper::http_post($url, $body, true);
 		if($result) {
 			$result = json_decode($result, true);
@@ -423,7 +423,10 @@ class Client implements ClientInterface
 	 * @param string $lang 指定返回国家地区的语言版本:zh_CN 简体, zh_TW繁体,en英语.默认zh_CN
 	 * @return mixed
 	 */
-	public function getUserInfo($openid, $lang = 'zh_CN');
+	public function getUserInfo($openid, $lang = 'zh_CN')
+	{
+
+	}
 
 	/**
 	 * 新增自定义分组
@@ -433,7 +436,10 @@ class Client implements ClientInterface
 	 * @param string $name 分组名称
 	 *
 	 */
-	public function createGroup($name);
+	public function createGroup($name)
+	{
+
+	}
 
 	/**
 	 * 查询所有分组
@@ -441,7 +447,10 @@ class Client implements ClientInterface
 	 *
 	 * @return Boolean|Array
 	 */
-	public function getGroup();
+	public function getGroup()
+	{
+
+	}
 
 	/**
 	 * 查询用户所在分组
@@ -451,7 +460,10 @@ class Client implements ClientInterface
 	 * @param string $openid 用户的OPENID
 	 * @return
 	 */
-	public function getUserGroupId($openid);
+	public function getUserGroupId($openid)
+	{
+
+	}
 
 	/**
 	 * 修改分组名称
@@ -462,7 +474,10 @@ class Client implements ClientInterface
 	 * @param string $name 修改后的分组名称
 	 * @return mixed
 	 */
-	public function updateGroupName($groupid, $name);
+	public function updateGroupName($groupid, $name)
+	{
+
+	}
 
 	/**
 	 * 移动用户所在的分组
@@ -472,7 +487,10 @@ class Client implements ClientInterface
 	 * @param int 目标分组ID
 	 * @return mixed
 	 */
-	public function moveUserGroup($openid, $to_groupid);
+	public function moveUserGroup($openid, $to_groupid)
+	{
+
+	}
 
 	/**
 	 * 设置用户的备注名
@@ -482,7 +500,10 @@ class Client implements ClientInterface
 	 * @param string $remark 修改后的用户备注名
 	 * @return mixed
 	 */
-	public function updateUserRemark($openid, $remark);
+	public function updateUserRemark($openid, $remark)
+	{
+
+	}
 
 	/**
 	 * 批量获取关注者列表
@@ -492,7 +513,10 @@ class Client implements ClientInterface
 	 * @param string $next_openid 用户的openid,以此来分批拉取
 	 * @return mixed
 	 */
-	public function getUserList($next_openid = '');
+	public function getUserList($next_openid = '')
+	{
+
+	}
 
 
 	//---------------------自定义菜单------
@@ -510,7 +534,10 @@ class Client implements ClientInterface
 	 * @param string $menu_data 菜单数据结构的json串
 	 * @return mixed
 	 */
-	public function createMenu($menu_data);
+	public function createMenu($menu_data)
+	{
+
+	}
 
 	/**
 	 * 获取当前菜单结构
@@ -518,7 +545,10 @@ class Client implements ClientInterface
 	 *
 	 * @return mixed
 	 */
-	public function getMenu();
+	public function getMenu()
+	{
+
+	}
 
 	/**
 	 * 自定义菜单删除
@@ -526,7 +556,10 @@ class Client implements ClientInterface
 	 *
 	 * @return mixed
 	 */
-	public function deleteMenu();
+	public function deleteMenu()
+	{
+
+	}
 
 	//---------------------推广支持--------
 
@@ -538,7 +571,10 @@ class Client implements ClientInterface
 	 * @param int $expire 临时二维码有效期，最大不超过1800
 	 * @return mixed
 	 */
-	public function createQRCodeTicket();
+	public function createQRCodeTicket()
+	{
+
+	}
 
 	/**
 	 * 通过ticket换取二维码
@@ -546,7 +582,10 @@ class Client implements ClientInterface
 	 * @param $ticket 用于换取二维码的ticket(需要urlencode)
 	 * @return mixed 正确返回二维码图片的raw data
 	 */
-	public function getQRCode($ticket);
+	public function getQRCode($ticket)
+	{
+
+	}
 
 	/**
 	 * 长链接转短链接
@@ -555,7 +594,10 @@ class Client implements ClientInterface
 	 * @param string $action long2short,代表长链接转短链接
 	 * @return mixed
 	 */
-	public function convertShortUrl($long_url, $action = 'long2short');
+	public function convertShortUrl($long_url, $action = 'long2short')
+	{
+
+	}
 
 	//---------------------多客服----------
 
@@ -565,8 +607,9 @@ class Client implements ClientInterface
 	 * @param array $data POST的数据,用于获取聊天记录
 	 * @return mixed
 	 */
-	public function getCustomerMsgRecord($data);
+	public function getCustomerMsgRecord($data)
+	{
 
-
+	}
 
 }

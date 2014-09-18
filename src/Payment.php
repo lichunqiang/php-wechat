@@ -246,7 +246,7 @@ class Payment implements PaymentInterface
 	public function createNativePackage($ret_code = 0, $ret_errmsg = 'ok')
 	{
 		//校验参数合法性
-		$this->checkPackageParam();
+		$ret_code == 0 AND $this->checkPackageParam();
 	    $native_obj["AppId"] = $this->app_id;
 	    $native_obj["Package"] = $this->generatePackageSting();
 	    $native_obj["TimeStamp"] = (string)time();
@@ -289,6 +289,7 @@ class Payment implements PaymentInterface
 
 	/**
 	 * 获取使用收货地址共享控件package
+	 *
 	 * @param string $url 当前页面地址,'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
 	 * @param string $access_token 用户授权凭证
 	 * @return string
@@ -462,6 +463,7 @@ class Payment implements PaymentInterface
 		//发送请求
 		$result = Helper::http_post(self::API_URL_PREFIX . self::DELIVERY_URL_SUFFIX . 'access_token=' . $this->access_token,
 									Helper::json_encode($biz_params));
+
 		if($result) {
 			//{"errcode":0,"errmsg":"ok"}
 			$result = json_decode($result, true);
@@ -520,14 +522,15 @@ class Payment implements PaymentInterface
 	{
 		if(!$this->access_token)
 			throw new RuntimeException('请先获取access token');
-		$result = Helper::http_get(FEEDBACK_UPDATE_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&feedbackid' . $feedbackid);
+		$result = Helper::http_get(self::FEEDBACK_UPDATE_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&feedbackid' . $feedbackid);
 		if($result) {
 			$result = json_decode($result, true);
-			if(!$result || empty($result))
+			if(!$result || empty($result)){
 				return false;
+			}
 			$this->errcode = $result['errcode'];
 			$this->errmsg = $result['errmsg'];
-			return true;
+			return $result['errcode'] == 0;
 		}
 		return false;
 	}
