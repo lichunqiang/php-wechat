@@ -26,8 +26,8 @@ interface ClientInterface
 	const MEDIA_UPLOAD_URL = '/media/upload?';
 	const UPLOAD_VIDEO_URL = '/media/uploadvideo?';
 
-	const QRCODE_CREATE_URL='/qrcode/create?';
-
+	const QRCODE_CREATE_URL = '/qrcode/create?';
+	const SHORTURL_CREATE = '/shorturl?';
 
 	const MESSAGE_SENDGROUP_URL = '/message/mass/sendall?';
 	const MESSAGE_SENDUSER_URL = '/message/mass/send?';
@@ -284,7 +284,7 @@ interface ClientInterface
 	 * @param int $expire 临时二维码有效期，最大不超过1800
 	 * @return mixed
 	 */
-	public function createQRCodeTicket();
+	public function createQRCodeTicket($scene_id, $qrcode_type = 0, $expire = 1800);
 
 	/**
 	 * 通过ticket换取二维码

@@ -571,9 +571,34 @@ class Client implements ClientInterface
 	 * @param int $expire 临时二维码有效期，最大不超过1800
 	 * @return mixed
 	 */
-	public function createQRCodeTicket()
+	public function createQRCodeTicket($scene_id, $qrcode_type = 0, $expire = 1800)
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$body = array(
+			'action_name' => $qrcode_type == 0 ? 'QR_SCENE' : 'QR_LIMIT_SCENE',
+			'action_info' => array(
+				'scene' => array('scene_id' => $scene_id)
+			)
+		);
+		if($qrcode_type == 0) {
+			$body['expire_seconds'] = $expire;
+		}
+		$url = self::API_URL_PREFIX . self::QRCODE_CREATE_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			if(isset($result['errcode'])) {
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -584,11 +609,12 @@ class Client implements ClientInterface
 	 */
 	public function getQRCode($ticket)
 	{
-
+		return self::QRCODE_IMG_URL_PREFIX . $ticket;
 	}
 
 	/**
 	 * 长链接转短链接
+	 * TODO::test fail
 	 *
 	 * @param string $long_url 需要转换的长链接，支持http://、https://、weixin://wxpay 格式的url
 	 * @param string $action long2short,代表长链接转短链接
@@ -596,7 +622,23 @@ class Client implements ClientInterface
 	 */
 	public function convertShortUrl($long_url, $action = 'long2short')
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$body = array('action' => $action, 'long_url' => $long_url);
+		$url = self::API_URL_PREFIX . self::SHORTURL_CREATE . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, $body);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errmsg = $result['errmsg'];
+			$this->errcode = $result['errcode'];
+			if($result['errcode'] != 0)
+				return false;
+			return $result['short_url'];
+		}
+		return false;
 	}
 
 	//---------------------多客服----------

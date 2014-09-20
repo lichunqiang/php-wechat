@@ -1,2 +1,4 @@
 /nbproject/private/
 /logs/
+vendor
+phpunit.xml

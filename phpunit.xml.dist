@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpunit colors="false"
+		 bootstrap='tests/bootstrap.php'>
+	<php>
+		<var name="app_id" value="app_id" />
+		<var name="app_secret" value="app_secret" />
+		<var name="partner_id" value="partner_id" />
+		<var name="partner_key" value="partner_key" />
+		<var name="pay_signkey" value="pay_signkey" />
+	</php>
+	<testsuites>
+		<testsuite name="All">
+			<directory>tests</directory>
+			<exclude>tests/bootstrap.php</exclude>
+		</testsuite>
+	</testsuites>
+</phpunit>
