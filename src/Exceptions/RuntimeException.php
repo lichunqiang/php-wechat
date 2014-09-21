@@ -7,7 +7,7 @@
 // | Author: Light <light-li@hotmail.com>
 // +----------------------------------------------------------------------
 
-namespace Light\Wechat;
+namespace Light\Wechat\Exceptions;
 
 class RuntimeException extends \Exception
 {

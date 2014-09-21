@@ -6,36 +6,51 @@
 // +----------------------------------------------------------------------
 // | Author: Light <light-li@hotmail.com>
 // +----------------------------------------------------------------------
-namespace Light\Wechat;
+namespace Light\Wechat\Interfaces;
 
-use Light\Wechat\Interfaces\ShopInterface;
-use Light\Wechat\Utils\Helper;
-use Light\Wechat\Exceptions\RuntimeException;
-
-class Shop implements ShopInterface
+class ShopInterface
 {
-	/**
-	 * 调用接口所需的凭证
-	 * @var string
-	 */
-	protected $access_token;
+	const API_URL_PREFIX = 'https://api.weixin.qq.com/merchant';
 
-	public function __construct($access_token = null)
-	{
-		$this->access_token = $access_token;
-	}
+	const PRODUCT_ADD = '/create?';
+	const PRODUCT_DEL = '/del?';
+	const PRODUCT_UPDATE = '/update?';
+	const PRODUCT_GET = '/get?';
+	const PRODUCT_GET_BY_STATUS = '/getbystatus?';
+	const PRODUCT_MOD_STATUS = '/modproductstatus?';
 
-	/**
-	 * 设置所需的access_token
-	 *
-	 * @param string $access_token
-	 * @return self
-	 */
-	public function setAccessToken($access_token)
-	{
-		$this->access_token = $access_token;
-		return $this;
-	}
+	const CATE_GET_SUB = '/category/getsub?';
+	const CATE_GET_SKU = '/category/getsku?';
+
+	const STOCK_ADD = '/stock/add?';
+	const STOCK_REDUCE = '/stock/reduce?';
+
+	const EXPRESS_ADD = '/express/add?';
+	const EXPRESS_DEL = '/express/del?';
+	const EXPRESS_UPDATE = '/express/update?';
+	const EXPRESS_GET_BYID = '/express/getbyid?';
+	const EXPRESS_GET_ALL = '/express/getall?';
+
+	const GROUP_ADD = '/group/add?';
+	const GROUP_DEL = '/group/del?';
+	const GROUP_UPDATE = '/group/update?';
+	const GROUP_UPDATE_ATTR = '/group/propertymod?';
+	const GROUP_UPDATE_MOD = '/group/productmod?';
+	const GROUP_GET_ALL = '/group/getall?';
+	const GROUP_GET_BYID = '/group/getbyid?';
+
+	const SHELF_ADD = '/shelf/add?';
+	const SHELF_DEL = '/shelf/del?';
+	const SHELF_UPDATE = '/shelf/mod?';
+	const SHELF_GET_ALL = '/shelf/getall?';
+	const SHELF_GET_BYID = '/shelf/getbyid?';
+
+	const ORDER_GET_BYID = '/order/getbyid?';
+	const ORDER_GET_BYFILTER = '/order/getbyfilter?';
+	const ORDER_SET_DELIVERY = '/order/setdelivery?';
+	const ORDER_CLOSE = '/order/close?';
+
+	const UPLOAD_IMG = '/common/upload_img?';
 
 	//---------------------------商品管理
 
@@ -46,12 +61,7 @@ class Shop implements ShopInterface
 	 * @param array $data 商品属性数据结构
 	 * @return mixed
 	 */
-	public function createProduct($data)
-	{
-		if(empty($this->access_token)) {
-			throw new RuntimeException('缺少access_token参数');
-		}
-	}
+	public function createProduct($data);
 
 	/**
 	 * 删除商品
@@ -339,6 +349,5 @@ class Shop implements ShopInterface
 	 * @return mixed
 	 */
 	public function uploadImage($file_path);
-
 
 }

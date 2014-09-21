@@ -10,8 +10,8 @@
 namespace Light\Wechat;
 
 use Light\Wechat\Interfaces\OauthClientInterface;
-use Light\Wechat\RuntimeException;
-use Light\Wechat\Helper;
+use Light\Wechat\Exceptions\RuntimeException;
+use Light\Wechat\Utils\Helper;
 
 class OauthClient
 {

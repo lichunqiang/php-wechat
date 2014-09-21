@@ -9,8 +9,8 @@
 namespace Light\Wechat;
 
 use Light\Wechat\Interfaces\PaymentInterface;
-use Light\Wechat\Helper;
-use Light\Wechat\RuntimeException;
+use Light\Wechat\Utils\Helper;
+use Light\Wechat\Exceptions\RuntimeException;
 
 class Payment implements PaymentInterface
 {

@@ -33,19 +33,24 @@ interface ClientInterface
 	const MESSAGE_SENDUSER_URL = '/message/mass/send?';
 	const MESSAGE_DELETE_URL = '/message/mass/delete?';
 	const CUSTOM_SEND_URL='/message/custom/send?';
+	const TEMPLATE_SEND_URL = '/message/template/send?';
 
 	const QR_SCENE = 0;
 	const QR_LIMIT_SCENE = 1;
 
 	const USER_GET_URL='/user/get?';
 	const USER_INFO_URL='/user/info?';
+	const USER_UPDATEREMARK_URL='/user/info/updateremark?';
 
-	const USER_GROUP_URL='/groups/getid?';
-	const GROUP_GET_URL='/groups/get?';
-	const GROUP_CREATE_URL='/groups/create?';
-	const GROUP_UPDATE_URL='/groups/update?';
-	const GROUP_MEMBER_UPDATE_URL='/groups/members/update?';
+	const USER_GROUP_URL = '/groups/getid?';
+	const GROUP_GET_URL = '/groups/get?';
+	const GROUP_CREATE_URL =' /groups/create?';
+	const GROUP_UPDATE_URL = '/groups/update?';
+	const GROUP_MEMBER_UPDATE_URL = '/groups/members/update?';
 
+	const CUSTOM_SERVICE_GET_RECORD = '/customservice/getrecord?';
+	const CUSTOM_SERVICE_GET_KFLIST = '/customservice/getkflist?';
+	const CUSTOM_SERVICE_GET_ONLINEKFLIST = '/customservice/getkflist?';
 
 	/**
 	 * 使用AppID和AppSecret调用本接口来获取access_token

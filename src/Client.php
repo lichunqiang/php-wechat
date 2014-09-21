@@ -9,8 +9,8 @@
 namespace Light\Wechat;
 
 use Light\Wechat\Interfaces\ClientInterface;
-use Light\Wechat\RuntimeException;
-use Light\Wechat\Helper;
+use Light\Wechat\Exceptions\RuntimeException;
+use Light\Wechat\Utils\Helper;
 
 class Client implements ClientInterface
 {
@@ -403,15 +403,37 @@ class Client implements ClientInterface
 	 * 发送模板消息
 	 *
 	 * @param array $body 模板消息的内容主体
-	 * @return mixed
+	 * @return boolean|int 返回发送成功的msgid
 	 */
 	public function sendTemplateMsg($body)
 	{
 		if(empty($this->access_token)) {
 			throw new RuntimeException('access_token不能为空');
 		}
+		$url = self::API_URL_PREFIX . self::TEMPLATE_SEND_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, is_array($body) ? Helper::json_encode($body) : $body);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errmsg = $result['errmsg'];
+			$this->errcode = $result['errcode'];
+			if($result['errcode'] != 0)
+				return false;
+			return $result['msgid'];
+		}
+		return false;
 	}
 
+	/**
+	 * 获取支持的发送消息类型
+	 *
+	 * @return array
+	 */
+	public function getSupportMsgType()
+	{
+		return $this->support_mass_type;
+	}
 
 
 	//---------------------用户管理--------
@@ -425,7 +447,24 @@ class Client implements ClientInterface
 	 */
 	public function getUserInfo($openid, $lang = 'zh_CN')
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$url = self::API_URL_PREFIX . self::USER_INFO_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&lang=' . $lang;
+		$result = Helper::http_get($url);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result)) {
+				return false;
+			}
+			if(isset($result['errcode'])){
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -434,11 +473,28 @@ class Client implements ClientInterface
 	 * 正确返回：{"group": {"id": 107, "name":"test"}}
 	 *
 	 * @param string $name 分组名称
-	 *
+	 * @return mixed
 	 */
 	public function createGroup($name)
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$body = array('group' => array('name' => $name));
+		$url = self::API_URL_PREFIX . self::GROUP_CREATE_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			if(isset($result['errcode'])){
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -449,7 +505,23 @@ class Client implements ClientInterface
 	 */
 	public function getGroup()
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$url = self::API_URL_PREFIX . self::GROUP_GET_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_get($url);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			if(isset($result['errcode'])){
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -462,7 +534,24 @@ class Client implements ClientInterface
 	 */
 	public function getUserGroupId($openid)
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$body = array('openid' => $openid);
+		$url = self::API_URL_PREFIX . self::USER_GROUP_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			if(isset($result['errcode'])){
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -476,7 +565,25 @@ class Client implements ClientInterface
 	 */
 	public function updateGroupName($groupid, $name)
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$body = array('group' => array('id' => $groupid, 'name' => $name));
+		$url = self::API_URL_PREFIX . self::GROUP_UPDATE_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result)) {
+				return false;
+			}
+			$this->errmsg = $result['errmsg'];
+			$this->errcode = $result['errcode'];
+			if($result['errcode'] != 0){
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -489,7 +596,25 @@ class Client implements ClientInterface
 	 */
 	public function moveUserGroup($openid, $to_groupid)
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$body = array('openid' => $openid, 'to_groupid' => $to_groupid);
+		$url = self::API_URL_PREFIX . self::GROUP_MEMBER_UPDATE_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result)) {
+				return false;
+			}
+			$this->errmsg = $result['errmsg'];
+			$this->errcode = $result['errcode'];
+			if($result['errcode'] != 0){
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -502,7 +627,25 @@ class Client implements ClientInterface
 	 */
 	public function updateUserRemark($openid, $remark)
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$body = array('openid' => $openid, 'remark' => $remark);
+		$url = self::API_URL_PREFIX . self::USER_UPDATEREMARK_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result)) {
+				return false;
+			}
+			$this->errmsg = $result['errmsg'];
+			$this->errcode = $result['errcode'];
+			if($result['errcode'] != 0){
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -515,7 +658,24 @@ class Client implements ClientInterface
 	 */
 	public function getUserList($next_openid = '')
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+		$url = self::API_URL_PREFIX . self::USER_GET_URL . 'access_token=' . $this->access_token . '&next_openid=' . $next_openid;
+		$result = Helper::http_get($url);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result)) {
+				return false;
+			}
+			if(isset($result['errcode'])){
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 
@@ -536,7 +696,22 @@ class Client implements ClientInterface
 	 */
 	public function createMenu($menu_data)
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_tokenu不能为空');
+		}
+		$url = self::API_URL_PREFIX . self::MENU_CREATE_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, is_array($menu_data) ? Helper::json_encode($menu_data) : $menu_data);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errmsg = $result['errmsg'];
+			$this->errcode = $result['errcode'];
+			if($result['errcode'] != 0)
+				return false;
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -547,7 +722,23 @@ class Client implements ClientInterface
 	 */
 	public function getMenu()
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_tokenu不能为空');
+		}
+		$url = self::API_URL_PREFIX . self::MENU_GET_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_get($url);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			if(isset($result['errcode'])) {
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
@@ -558,7 +749,22 @@ class Client implements ClientInterface
 	 */
 	public function deleteMenu()
 	{
-
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_tokenu不能为空');
+		}
+		$url = self::API_URL_PREFIX . self::MENU_DELETE_URL . 'access_token=' . $this->access_token;
+		$result = Helper::http_get($url);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errmsg = $result['errmsg'];
+			$this->errcode = $result['errcode'];
+			if($result['errcode'] != 0)
+				return false;
+			return true;
+		}
+		return false;
 	}
 
 	//---------------------推广支持--------
@@ -645,13 +851,89 @@ class Client implements ClientInterface
 
 	/**
 	 * 获取客服聊天记录接口
+	 * POST: {"starttime":123456789,"endtime":987654321,"openid":"OPENID","pagesize":10,"pageindex":1}
 	 *
 	 * @param array $data POST的数据,用于获取聊天记录
 	 * @return mixed
 	 */
 	public function getCustomerMsgRecord($data)
 	{
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
 
+		$url = self::API_URL_PREFIX . self::CUSTOM_SERVICE_GET_RECORD . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, is_array($data) ? Helper::json_encode($data) : $data);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			if(isset($result['errcode'])) {
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+
+			return $result;
+		}
+		return false;
 	}
 
+	/**
+	 * 获取多客服基本信息
+	 * TODO:需要验证出处
+	 *
+	 * @return mixed
+	 */
+	public function getCustomerServiceUserList()
+	{
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+
+		$url = self::API_URL_PREFIX . self::CUSTOM_SERVICE_GET_KFLIST . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, is_array($data) ? Helper::json_encode($data) : $data);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			if(isset($result['errcode'])) {
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+
+			return $result;
+		}
+		return false;
+	}
+
+	/**
+	 * 获取多客服在线客服接待信息
+	 * TODO::需要验证出处
+	 *
+	 * @return mixed;
+	 */
+	public function getCustomerServiceOnline()
+	{
+		if(empty($this->access_token)) {
+			throw new RuntimeException('access_token不能为空');
+		}
+
+		$url = self::API_URL_PREFIX . self::CUSTOM_SERVICE_GET_ONLINEKFLIST . 'access_token=' . $this->access_token;
+		$result = Helper::http_post($url, is_array($data) ? Helper::json_encode($data) : $data);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			if(isset($result['errcode'])) {
+				$this->errmsg = $result['errmsg'];
+				$this->errcode = $result['errcode'];
+				return false;
+			}
+
+			return $result;
+		}
+		return false;
+	}
 }
