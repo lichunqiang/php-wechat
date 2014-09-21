@@ -1,6 +1,6 @@
 <?php
 
-namespace Light\Wechat;
+namespace Light\Wechat\Utils;
 
 class HelperTest extends \PHPUnit_Framework_TestCase
 {
