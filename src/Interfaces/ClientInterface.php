@@ -44,7 +44,7 @@ interface ClientInterface
 
 	const USER_GROUP_URL = '/groups/getid?';
 	const GROUP_GET_URL = '/groups/get?';
-	const GROUP_CREATE_URL =' /groups/create?';
+	const GROUP_CREATE_URL = '/groups/create?';
 	const GROUP_UPDATE_URL = '/groups/update?';
 	const GROUP_MEMBER_UPDATE_URL = '/groups/members/update?';
 

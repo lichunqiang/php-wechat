@@ -73,6 +73,11 @@ class OauthClient implements OauthClientInterface
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
 				return false;
+			if(isset($result['errocde'])) {
+				$this->errcode = $result['errcode'];
+				$this->errmsg = $result['errmsg'];
+				return false;
+			}
 		    //{"access_token":"ACCESS_TOKEN","expires_in":7200,"refresh_token":"REFRESH_TOKEN","openid":"OPENID","scope":"SCOPE"}
 			$this->access_token = $result['access_token'];
 			return $result;
@@ -130,7 +135,7 @@ class OauthClient implements OauthClientInterface
 		if(empty($this->access_token)) {
 			throw new RuntimeException('access_token不能为空');
 		}
-		$result = Helper::http_get(SELF::OAUTH_SNS_PREFIX . self::OAUTH_USERINFO_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&lang=zh_CN');
+		$result = Helper::http_get(self::OAUTH_SNS_PREFIX . self::OAUTH_USERINFO_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&lang=zh_CN');
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
