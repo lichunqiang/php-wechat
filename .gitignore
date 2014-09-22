@@ -2,3 +2,6 @@
 /logs/
 vendor
 phpunit.xml
+examples/init.php
+examples/cache/*
+composer.lock
