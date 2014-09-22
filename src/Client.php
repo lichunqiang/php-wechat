@@ -56,7 +56,7 @@ class Client implements ClientInterface
 	 */
 	private $support_mass_type = array('mpnews', 'voice', 'image', 'mpvideo', 'text');
 
-	public function __construct($app_id, $app_secret)
+	public function __construct($app_id = null, $app_secret = null)
 	{
 		if(empty($app_id) || empty($app_secret)) {
 			throw new RuntimeException("缺少必要的参数");

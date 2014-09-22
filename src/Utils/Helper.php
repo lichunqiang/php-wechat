@@ -82,7 +82,7 @@ class Helper
 	 * @param string $url
 	 */
 	static function http_get($url){
-		$oCurl = curl_init();
+		$oCurl = \curl_init();
 		if(stripos($url,"https://")!==FALSE){
 			curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
 			curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, FALSE);
@@ -106,7 +106,7 @@ class Helper
 	 * @return string content
 	 */
 	static function http_post($url, $param, $is_upload = FALSE){
-		$oCurl = curl_init();
+		$oCurl = \curl_init();
 		if(stripos($url,"https://")!==FALSE){
 			curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
 			curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);

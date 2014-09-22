@@ -22,20 +22,12 @@ class Shop implements ShopInterface
 
 	public function __construct($access_token = null)
 	{
+		if($access_token == nul) {
+			throw new RuntimeException('access_token不能为空');
+		}
 		$this->access_token = $access_token;
 	}
 
-	/**
-	 * 设置所需的access_token
-	 *
-	 * @param string $access_token
-	 * @return self
-	 */
-	public function setAccessToken($access_token)
-	{
-		$this->access_token = $access_token;
-		return $this;
-	}
 
 	//---------------------------商品管理
 

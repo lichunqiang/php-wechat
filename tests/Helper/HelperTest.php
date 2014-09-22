@@ -56,16 +56,21 @@ class HelperTest extends \PHPUnit_Framework_TestCase
 
 	public function testFormatQueryParamMap()
 	{
+		$param = array('name' => 'light li', 'age' => 12, 'body' => null);
 
+		$this->assertEquals('name=light%20li&age=12', Helper::formatQueryParamMap($param, true));
+		$this->assertEquals('name=light li&age=12', Helper::formatQueryParamMap($param));
 	}
 
 	public function testFormatBizQueryParamMap()
 	{
-
+		$param = array('name' => 'light li', 'age' => 12);
+		$this->assertEquals('name=light%20li&age=12', Helper::formatBizQueryParamMap($param, true));
+		$this->assertEquals('name=light li&age=12', Helper::formatBizQueryParamMap($param));
 	}
 
 	public function testMd5Sign()
 	{
-
+		$this->markTestIncomplete('not complete');
 	}
 }

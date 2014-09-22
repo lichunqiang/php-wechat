@@ -13,7 +13,7 @@ use Light\Wechat\Interfaces\OauthClientInterface;
 use Light\Wechat\Exceptions\RuntimeException;
 use Light\Wechat\Utils\Helper;
 
-class OauthClient
+class OauthClient implements OauthClientInterface
 {
 	/**
 	 * 公众号应用唯一标识
@@ -35,7 +35,7 @@ class OauthClient
 	public $errcode;
 	public $errmsg;
 
-	public function __construct($app_id, $app_secret)
+	public function __construct($app_id = null, $app_secret = null)
 	{
 		if(empty($app_id) || empty($app_secret)) {
 			throw new RuntimeException('缺少必要参数');
@@ -51,11 +51,11 @@ class OauthClient
 	 * @param string $state 重定向后带上state参数，取值a-zA-Z0-9
 	 * @param string $scope 应用授权作用域，取值：snsapi_base | snsapi_userinfo
 	 */
-	public function getOauthRedirect($redirect_uri, $state='', $scope='snsapi_userinfo')
+	public function getOauthRedirect($redirect_uri, $state='', $scope='snsapi_base')
 	{
 		return self::OAUTH_PREFIX . self::OAUTH_AUTHORIZE_URL . 'appid=' . $this->app_id
 						. '&redirect_uri=' . urlencode($redirect_uri)
-						. 'response_type=code&scope=' . $scope . '&state=' . $state . '#wechat_redirect';
+						. '&response_type=code&scope=' . $scope . '&state=' . $state . '#wechat_redirect';
 	}
 
 	/**

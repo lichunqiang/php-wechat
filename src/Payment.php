@@ -63,7 +63,7 @@ class Payment implements PaymentInterface
 	public $errcode;
 	public $errmsg;
 
-	public function __construct($app_id, $app_secret, $partner_id, $partner_key, $pay_signkey)
+	public function __construct($app_id = null, $app_secret = null, $partner_id = null, $partner_key = null, $pay_signkey = null)
 	{
 		if(empty($app_id) || empty($pay_signkey)
 			|| empty($app_secret) || empty($partner_id)
