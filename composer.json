@@ -13,7 +13,8 @@
         "php": ">=5.3.0"
     },
     "require-dev":{
-
+        "monolog/monolog": "*",
+        "aferrandini/phpqrcode": "1.0.1"
     },
     "autoload": {
         "psr-4": {"Light\\Wechat\\": "src"}
