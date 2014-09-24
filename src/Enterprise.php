@@ -15,6 +15,13 @@ use Light\Wechat\Exceptions\RuntimeException;
 class Enterprise implements EnterpriseInterface
 {
 	/**
+	 * 企业应用的id，整型。可在应用的设置页面查看
+	 *
+	 * @var string
+	 */
+	public $agent_id;
+
+	/**
 	 * 企业号的标识
 	 *
 	 * @var string
@@ -46,6 +53,12 @@ class Enterprise implements EnterpriseInterface
 	* @var string
 	*/
 	public $errmsg;
+
+	/**
+	 * 支持上传的媒体类型
+	 * @var array
+	 */
+	private $support_media_type = array('image', 'voice', 'video', 'file');
 
 	public function __construct($corp_id = null, $secret = null)
 	{
@@ -359,6 +372,349 @@ class Enterprise implements EnterpriseInterface
 				return false;
 			}
 			return $result['userlist'];
+		}
+		return false;
+	}
+
+	//----------标签
+
+	/**
+	 * 创建标签
+	 * 标签锁默认为未加锁状态
+	 *
+	 * @param string $tag_name 标签名称。长度为1~64个字符，标签不可与其他同组的标签重名，也不可与全局标签重名
+	 * @return mixed boolean|int 成功返回创建的标签ID
+	 */
+	public function createTag($tag_name)
+	{
+		$body = array('tagname' => $tag_name);
+		$result = Helper::http_post(self::API_URL_PREFIX . self::TAG_CREATE . 'access_token=' . $this->access_token,
+									Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			if($result['errcode'] != 0) {
+				return false;
+			}
+			return $result['tagid'];
+		}
+		return false;
+	}
+
+	/**
+	 * 更新标签名字
+	 * 管理员必须是指定标签的创建者。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @param string $tag_name 标签名称。最长64个字符
+	 * @return mixed
+	 */
+	public function updateTagName($tag_id, $tag_name)
+	{
+		$body = array('tagid' => $tag_id, 'tagname' => $tag_name);
+		$result = Helper::http_post(self::API_URL_PREFIX . self::TAG_UPDATE . 'access_token=' . $this->access_token,
+									Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			if($result['errcode'] != 0) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 删除标签
+	 * 管理员必须是指定标签的创建者，并且标签的成员列表为空。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @return mixed
+	 */
+	public function deleteTag($tag_id)
+	{
+		$result = http_get(self::API_URL_PREFIX . self::TAG_DELETE . 'access_token=' . $this->access_token . '&tagid=' . $tag_id);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			if($result['errcode'] != 0) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+	}
+
+	/**
+	 * 获取标签成员
+	 * 管理员须拥有“获取标签成员”的接口权限，标签须对管理员可见；返回列表仅包含管理员管辖范围的成员。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @return mixed boolean|array 成功时返回标签下的成员列表
+	 */
+	public function getTagUserList($tag_id)
+	{
+		$result = http_get(self::API_URL_PREFIX . self::TAG_GET . 'access_token=' . $this->access_token . '&tagid=' . $tag_id);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			if($result['errcode'] != 0) {
+				return false;
+			}
+			return $result['userlist'];
+		}
+		return false;
+	}
+
+	/**
+	 * 增加标签成员
+	 * 标签对管理员可见且未加锁，成员属于管理员管辖范围。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @param array $user_list 企业员工ID列表
+	 * @return mixed
+	 */
+	public function addTagUser($tag_id, $user_list = array())
+	{
+		if(!is_array($user_list) || empty($user_list)) {
+			return false;
+		}
+		$body = array('tagid' => $tag_id, 'userlist' => $user_list);
+		$result = Helper::http_post(self::API_URL_PREFIX . self::TAG_ADD_USER . 'access_token=' . $this->access_token,
+									Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			if($result['errcode'] != 0 || isset($result['invalidlist'])) {
+				//TODO::将非法的userid反馈给开发者
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 删除标签成员
+	 * 标签对管理员可见且未加锁，成员属于管理员管辖范围。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @param array $user_list 企业员工ID列表
+	 * @return mixed
+	 */
+	public function deleteTagUser($tag_id, $user_list = array())
+	{
+		if(!is_array($user_list) || empty($user_list)) {
+			return false;
+		}
+		$body = array('tagid' => $tag_id, 'userlist' => $user_list);
+		$result = Helper::http_post(self::API_URL_PREFIX . self::TAG_DEL_USER . 'access_token=' . $this->access_token,
+									Helper::json_encode($body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			if($result['errcode'] != 0 || isset($result['invalidlist'])) {
+				//TODO::将非法的userid反馈给开发者
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	//-------多媒体文件
+
+	/**
+	 * 上传多媒体文件
+	 * 图片（image）: 1MB，支持JPG格式
+	 * 语音（voice）：2MB，播放长度不超过60s，支持AMR格式
+	 * 视频（video）：10MB，支持MP4格式
+	 * 普通文件（file）：10MB
+	 * 注意：数组的键值任意，但文件名前必须加@，使用单引号以避免本地路径斜杠被转义
+	 * 媒体文件在后台保存时间为3天，即3天后media_id失效。
+	 * 返回->{"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
+	 *
+	 * @param string $media form-data中媒体文件标识，有filename、filelength、content-type等信息
+	 * @param string $type 媒体文件类型: image, voice, video, file
+	 * @return mixed
+	 */
+	public function uploadMedia($media, $type)
+	{
+		$body = array('media' => $media, 'type' => $type);
+		$result = Helper::http_post(self::API_URL_PREFIX . self::MEDIA_UPLOAD .'access_token=' . $this->access_token, $body, true);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+
+			if(isset($result['errcode'])) {
+				$this->errcode = $result['errcode'];
+				$this->errmsg = $result['errmsg'];
+				return false;
+			}
+			return $result;
+		}
+		return false;
+	}
+
+	/**
+	 * 通过media_id获取图片、语音、视频等文件。
+	 * 完全公开。所有管理员均可调用，media_id可以共享。
+	 *
+	 * @param string $media_id 媒体文件id
+	 * @return mixed
+	 */
+	public function getMedia($media_id)
+	{
+		$result = Helper::http_get(self::API_URL_PREFIX . self::MEDIA_GET . 'access_token=' . $this->access_token . '&media_id=' . $media_id);
+		//return directly
+		return $result;
+	}
+
+	/**
+	 * 获取上传媒体文件所支持的文件类型
+	 *
+	 * @return array
+	 */
+	public function getSupportMediaType()
+	{
+		return $this->support_media_type;
+	}
+
+	//----------设置应用id
+
+	/**
+	 * 设置企业应用的ID
+	 *
+	 * @param string $agent_id
+	 * @return self
+	 */
+	public function setAgentId($agent_id)
+	{
+		$this->agent_id = $agent_id;
+		return $this;
+	}
+
+	//----------------发送消息
+
+	/**
+	 * 发送消息接口
+	 * 需要管理员对应用有使用权限，对收件人touser、toparty、totag有查看权限，否则本次调用失败。
+	 * 返回结果，如果存在不合法的touser、toparty、totag则会返回
+	 *
+	 * @param array $msg_body 发送消息的数据结构
+	 * @return mixed
+	 */
+	public function sendMessage($msg_body)
+	{
+		$result = Helper::http_post(self::API_URL_PREFIX . self::MSG_SEND . 'access_token=' . $this->access_token,
+									Helper::json_encode($msg_body));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			//TODO::返回不合法数据给开发者
+			if($result['errcode'] != 0) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	//----------------菜单
+
+	/**
+	 * 创建菜单
+	 * 管理员须拥有应用的管理权限，并且应用必须设置在回调模式。
+	 *
+	 * @param array $menu 菜单数据结构
+	 * @return mixed
+	 */
+	public function createMenu($menu)
+	{
+		$result = Helper::http_post(self::API_URL_PREFIX . self::MENU_CREATE . 'access_token=' . $this->access_token . '&agentid=' . $this->agentid,
+									Helper::json_encode($menu));
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			if($result['errcode'] != 0) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 删除菜单
+	 *
+	 * @return mixed
+	 */
+	public function deleteMenu()
+	{
+		$result = Helper::http_get(self::API_URL_PREFIX . self::MENU_DELETE . 'access_token='. $this->access_token . '&agentid=' . $this->agent_id);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			if($result['errcode'] != 0) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 获取菜单列表
+	 *
+	 * @return mixed
+	 */
+	public function getMenuList()
+	{
+		$result = Helper::http_get(self::API_URL_PREFIX . self::MENU_GET . 'access_token='. $this->access_token . '&agentid=' . $this->agent_id);
+		if($result) {
+			$result = json_decode($result, true);
+			if(!$result || empty($result))
+				return false;
+
+			$this->errcode = $result['errcode'];
+			$this->errmsg = $result['errmsg'];
+			if(isset($result['errcode'])) {
+				return false;
+			}
+			return $result;
 		}
 		return false;
 	}

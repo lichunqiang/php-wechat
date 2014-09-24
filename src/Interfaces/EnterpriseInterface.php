@@ -28,6 +28,26 @@ interface EnterpriseInterface
 	const USER_GET = '/user/get?';
 	const USER_LIST = '/user/simplelist?';
 
+	//标签
+	const TAG_CREATE = '/tag/create?';
+	const TAG_UPDATE = 'tag/update?';
+	const TAG_DELETE = '/tag/delete?';
+	const TAG_GET = '/tag/get?';
+	const TAG_ADD_USER = '/tag/addtagusers?';
+	const TAG_DEL_USER = '/tag/deltagusers?';
+
+	//媒体文件
+	const MEDIA_UPLOAD = '/media/upload?';
+	const MEDIA_GET = '/media/get?';
+
+	//发送消息
+	const MSG_SEND = '/message/send?';
+
+	//菜单
+	const MENU_CREATE = '/menu/create?';
+	const MENU_DELETE = '/menu/delete?';
+	const MENU_GET = '/menu/get?';
+
 	/**
 	 * 获取access_token
 	 *
@@ -149,4 +169,123 @@ interface EnterpriseInterface
 	 */
 	public function getDepartmentUserList($departmentid, $fetch_child = 0, $status = 0);
 
+	//----------标签
+
+	/**
+	 * 创建标签
+	 * 标签锁默认为未加锁状态
+	 *
+	 * @param string $tag_name 标签名称。长度为1~64个字符，标签不可与其他同组的标签重名，也不可与全局标签重名
+	 * @return mixed
+	 */
+	public function createTag($tag_name);
+
+	/**
+	 * 更新标签名字
+	 * 管理员必须是指定标签的创建者。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @param string $tag_name 标签名称。最长64个字符
+	 * @return mixed
+	 */
+	public function updateTagName($tag_id, $tag_name);
+
+	/**
+	 * 删除标签
+	 * 管理员必须是指定标签的创建者，并且标签的成员列表为空。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @return mixed
+	 */
+	public function deleteTag($tag_id);
+
+	/**
+	 * 获取标签成员
+	 * 管理员须拥有“获取标签成员”的接口权限，标签须对管理员可见；返回列表仅包含管理员管辖范围的成员。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @return mixed
+	 */
+	public function getTagUserList($tag_id);
+
+	/**
+	 * 增加标签成员
+	 * 标签对管理员可见且未加锁，成员属于管理员管辖范围。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @param array $user_list 企业员工ID列表
+	 * @return mixed
+	 */
+	public function addTagUser($tag_id, $user_list = array());
+
+	/**
+	 * 删除标签成员
+	 * 标签对管理员可见且未加锁，成员属于管理员管辖范围。
+	 *
+	 * @param int $tag_id 标签ID
+	 * @param array $user_list 企业员工ID列表
+	 * @return mixed
+	 */
+	public function deleteTagUser($tag_id, $user_list = array());
+
+	//-------多媒体文件
+
+	/**
+	 * 上传多媒体文件
+	 * 图片（image）: 1MB，支持JPG格式
+	 * 语音（voice）：2MB，播放长度不超过60s，支持AMR格式
+	 * 视频（video）：10MB，支持MP4格式
+	 * 普通文件（file）：10MB
+	 * 注意：数组的键值任意，但文件名前必须加@，使用单引号以避免本地路径斜杠被转义
+	 * 媒体文件在后台保存时间为3天，即3天后media_id失效。
+	 * 返回->{"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
+	 *
+	 * @param string $media form-data中媒体文件标识，有filename、filelength、content-type等信息
+	 * @param string $type 媒体文件类型: image, voice, video, file
+	 * @return mixed
+	 */
+	public function uploadMedia($media, $type);
+
+	/**
+	 * 通过media_id获取图片、语音、视频等文件。
+	 *
+	 * @param string $media_id 媒体文件id
+	 * @return mixed
+	 */
+	public function getMedia($media_id);
+
+	/**
+	 * 发送消息接口
+	 * 需要管理员对应用有使用权限，对收件人touser、toparty、totag有查看权限，否则本次调用失败。
+	 * 返回结果，如果存在不合法的touser、toparty、totag则会返回
+	 *
+	 * @param array $msg_body 发送消息的数据结构
+	 * @return mixed
+	 */
+	public function sendMessage($msg_body);
+
+	//----------------菜单
+
+	/**
+	 * 创建菜单
+	 * 管理员须拥有应用的管理权限，并且应用必须设置在回调模式。
+	 *
+	 * @param array $menu 菜单数据结构
+	 * @return mixed
+	 */
+	public function createMenu($menu);
+
+	/**
+	 * 删除菜单
+	 *
+	 * @return mixed
+	 */
+	public function deleteMenu();
+
+	/**
+	 * 获取菜单列表
+	 *
+	 * @return mixed
+	 */
+	public function getMenuList();
 }

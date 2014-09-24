@@ -27,6 +27,7 @@ interface OauthClientInterface
 	 * @param string $redirect_uri 授权回调地址
 	 * @param string $state 重定向后带上state参数，取值a-zA-Z0-9
 	 * @param string $scope 应用授权作用域，取值：snsapi_base | snsapi_userinfo
+	 * @return string
 	 */
 	public function getOauthRedirect($redirect_uri, $state='', $scope='snsapi_userinfo');
 
