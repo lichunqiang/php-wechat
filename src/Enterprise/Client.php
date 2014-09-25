@@ -6,13 +6,13 @@
 // +----------------------------------------------------------------------
 // | Author: Light <light-li@hotmail.com>
 // +----------------------------------------------------------------------
-namespace Light\Wechat;
+namespace Light\Wechat\Enterprise;
 
-use Light\Wechat\Interfaces\EnterpriseInterface;
+use Light\Wechat\Interfaces\Enterprise\ClientInterface;
 use Light\Wechat\Utils\Helper;
 use Light\Wechat\Exceptions\RuntimeException;
 
-class Enterprise implements EnterpriseInterface
+class Client implements ClientInterface
 {
 	/**
 	 * 企业应用的id，整型。可在应用的设置页面查看

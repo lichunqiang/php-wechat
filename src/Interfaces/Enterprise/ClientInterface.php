@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------
 // | Author: Light <light-li@hotmail.com>
 // +----------------------------------------------------------------------
-namespace Light\Wechat\Interfaces;
+namespace Light\Wechat\Interfaces\Enterprise;
 
 interface EnterpriseInterface
 {
