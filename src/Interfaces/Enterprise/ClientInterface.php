@@ -71,9 +71,10 @@ interface EnterpriseInterface
 	 *
 	 * @param $parentid 父亲部门ID，跟部门id为1.默认为1
 	 * @param $name 部门名称。长度限制1~64个字符
+	 * @param int $order 在父部门中的次序。从1开始，数字越大排序越靠后
 	 * @return mixed boolean|int 成功返回创建的部门id
 	 */
-	public function createDepartment($name, $parentid = 1);
+	public function createDepartment($name, $parentid = 1, $order = 1);
 
 	/**
 	 * 更新部门
@@ -81,6 +82,7 @@ interface EnterpriseInterface
 	 *
 	 * @param int $id 部门id
 	 * @param string $name 更新部门名称。长度限制0~64.修改部门名称时指定该参数
+	 * @param int $order 在父部门中的次序。从1开始，数字越大排序越靠后
 	 * @return mixed
 	 */
 	public function updateDepartment($id, $name = '');

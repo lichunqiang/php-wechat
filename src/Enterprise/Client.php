@@ -110,13 +110,14 @@ class Client implements ClientInterface
 	 * 创建部门
 	 * 管理员须拥有“操作通讯录”的接口权限，以及父部门的管理权限。
 	 *
-	 * @param $parentid 父亲部门ID，跟部门id为1.默认为1
-	 * @param $name 部门名称。长度限制1~64个字符
+	 * @param int $parentid 父亲部门ID，跟部门id为1.默认为1
+	 * @param string $name 部门名称。长度限制1~64个字符
+	 * @param int $order 在父部门中的次序。从1开始，数字越大排序越靠后
 	 * @return mixed boolean|int 成功返回创建的部门id
 	 */
-	public function createDepartment($name, $parentid = 1)
+	public function createDepartment($name, $parentid = 1, $order = 1)
 	{
-		$body = array('name' => $name, 'parentid' => $parentid);
+		$body = array('name' => $name, 'parentid' => $parentid, 'order' => $order);
 		$result = Helper::http_post(self::API_URL_PREFIX . self::DEPARTMENT_CREATE . 'access_token=' . $this->access_token, Helper::json_encode($body));
 		if($result) {
 			$result = json_decode($result, true);
@@ -138,9 +139,10 @@ class Client implements ClientInterface
 	 *
 	 * @param int $id 部门id
 	 * @param string $name 更新部门名称。长度限制0~64.修改部门名称时指定该参数
+	 * @param int $order 在父部门中的次序。从1开始，数字越大排序越靠后
 	 * @return mixed
 	 */
-	public function updateDepartment($id, $name = '')
+	public function updateDepartment($id, $name = '', $order = 1)
 	{
 		$body = array('id' => $id);
 		if($name) {
