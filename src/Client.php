@@ -156,7 +156,7 @@ class Client implements ClientInterface
             throw new RuntimeException('access_token不能为空');
         }
         $url = self::FILE_API_URL_PREFIX . self::MEDIA_GET_URL . 'access_token=' . $this->access_token . '&media_id=' . $media_id;
-        $result = http_get($url);
+        $result = Helper::http_get($url);
         if ($result) {
             if ($json = json_decode($result, true)) {
                 $this->errcode = $json['errcode'];
