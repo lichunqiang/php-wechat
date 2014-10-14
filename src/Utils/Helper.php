@@ -30,11 +30,18 @@ class Helper
 
     /**
      * 微信api不支持中文转义的json结构
+     * 5.4.0 json_encode 增加了JSON_UNESCAPED_UNICODE
+     * @see http://cn2.php.net/manual/en/function.json-encode.php
+     *
      * @param array $arr
      */
     public static function jsonEncode($arr)
     {
-        $parts = array();
+        //TODO::这么做合适么
+        if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
+            return json_encode($arr, JSON_UNESCAPED_UNICODE);
+        }
+
         $is_list = false;
         //Find out if the given array is a numerical array
         $keys = array_keys($arr);
@@ -118,6 +125,7 @@ class Helper
     }
     /**
      * POST 请求
+     * 5.5.0不支持@file形式，增加了CURLFile
      * @param string $url
      * @param array $param
      * @param boolean is upload file action

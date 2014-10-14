@@ -42,6 +42,9 @@ class MediaFile extends \SplFileInfo
 
     /**
      * 获取上传媒体
+     * PHP5.5.0 废弃了@file 形式发送文件，用curl_file_create(CURLFile Obj)
+     * @see http://cn2.php.net/manual/en/function.curl-file-create.php
+     * @return mixed file related thing
      */
     public function media()
     {
@@ -77,6 +80,9 @@ class MediaFile extends \SplFileInfo
         $path = $this->getRealPath();
         $ext = $this->getExtension();
         $mime_type = isset($this->mime_types[$ext]) ? $this->mime_types[$ext] : 'application/octet-stream';
+        if (function_exists('curl_file_create')) {
+            return curl_file_create($path, $mime_type);
+        }
         return '@' . $path . ';type=' . $mime_type;
     }
 
