@@ -387,7 +387,9 @@ class Shop implements ShopInterface
             throw new RuntimeException('access_token不能为空');
         }
         $body = array('filename' => $media->media());
-        $url = self::API_URL_PREFIX . self::UPLOAD_IMG . 'access_token=' . $this->access_token;
+        // $body = $media->media();
+        var_dump($body);
+        $url = self::API_URL_PREFIX . self::UPLOAD_IMG . 'access_token=' . $this->access_token . '&filename=' . basename($file_path);
         $result = Helper::httpPost($url, $body, true);
         if ($result) {
             $result = json_decode($result, true);
