@@ -67,7 +67,7 @@ class OauthClient implements OauthClientInterface
      */
     public function getOauthAccessToken($code)
     {
-        $result = Helper::http_get(self::OAUTH_TOKEN_PREFIX . self::OAUTH_TOKEN_URL . 'appid=' . $this->app_id
+        $result = Helper::httpGet(self::OAUTH_TOKEN_PREFIX . self::OAUTH_TOKEN_URL . 'appid=' . $this->app_id
             . '&secret=' . $this->app_secret . '&code=' . $code . '&grant_type=authorization_code');
         if ($result) {
             $result = json_decode($result, true);
@@ -107,7 +107,7 @@ class OauthClient implements OauthClientInterface
      */
     public function refreshOauthAccessToken($refresh_token)
     {
-        $result = Helper::http_get(self::OAUTH_TOKEN_PREFIX . self::OAUTH_REFRESH_URL . 'appid=' . $this->app_id
+        $result = Helper::httpGet(self::OAUTH_TOKEN_PREFIX . self::OAUTH_REFRESH_URL . 'appid=' . $this->app_id
             . '&grant_type=refresh_token&refresh_token=' . $refresh_token);
         if ($result) {
             $result = json_decode($result, true);
@@ -138,7 +138,7 @@ class OauthClient implements OauthClientInterface
         if (empty($this->access_token)) {
             throw new RuntimeException('access_token不能为空');
         }
-        $result = Helper::http_get(self::OAUTH_SNS_PREFIX . self::OAUTH_USERINFO_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&lang=zh_CN');
+        $result = Helper::httpGet(self::OAUTH_SNS_PREFIX . self::OAUTH_USERINFO_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&lang=zh_CN');
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -166,7 +166,7 @@ class OauthClient implements OauthClientInterface
         if (empty($this->access_token)) {
             throw new RuntimeException('access_token不能为空');
         }
-        $result = Helper::http_get(self::OAUTH_SNS_PREFIX . self::OAUTH_AUTH_URL . 'access_token=' . $this->access_token . '&openid=' . $openid);
+        $result = Helper::httpGet(self::OAUTH_SNS_PREFIX . self::OAUTH_AUTH_URL . 'access_token=' . $this->access_token . '&openid=' . $openid);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {

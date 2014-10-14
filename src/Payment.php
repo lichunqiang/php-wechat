@@ -465,8 +465,8 @@ class Payment implements PaymentInterface
         $biz_params['sign_method'] = self::SIGN_TYPE;
 
         //发送请求
-        $result = Helper::http_post(self::API_URL_PREFIX . self::DELIVERY_URL_SUFFIX . 'access_token=' . $this->access_token,
-            Helper::json_encode($biz_params));
+        $result = Helper::httpPost(self::API_URL_PREFIX . self::DELIVERY_URL_SUFFIX . 'access_token=' . $this->access_token,
+            Helper::jsonEncode($biz_params));
 
         if ($result) {
             //{"errcode":0,"errmsg":"ok"}
@@ -505,8 +505,8 @@ class Payment implements PaymentInterface
         $biz_params['sign_method'] = self::SIGN_TYPE;
 
         //发送请求
-        $result = Helper::http_post(self::API_URL_PREFIX . self::ORDERQUERY_URL_SUFFIX . 'access_token=' . $this->access_token,
-            Helper::json_encode($biz_params));
+        $result = Helper::httpPost(self::API_URL_PREFIX . self::ORDERQUERY_URL_SUFFIX . 'access_token=' . $this->access_token,
+            Helper::jsonEncode($biz_params));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -533,7 +533,7 @@ class Payment implements PaymentInterface
             throw new RuntimeException('请先获取access token');
         }
 
-        $result = Helper::http_get(self::FEEDBACK_UPDATE_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&feedbackid' . $feedbackid);
+        $result = Helper::httpGet(self::FEEDBACK_UPDATE_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&feedbackid' . $feedbackid);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {

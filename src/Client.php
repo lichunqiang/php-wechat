@@ -72,7 +72,7 @@ class Client implements ClientInterface
      */
     public function getAccessToken()
     {
-        $result = Helper::http_get(self::API_URL_PREFIX . self::AUTH_URL . '&appid=' . $this->app_id . '&secret=' . $this->app_secret);
+        $result = Helper::httpGet(self::API_URL_PREFIX . self::AUTH_URL . '&appid=' . $this->app_id . '&secret=' . $this->app_secret);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -127,7 +127,7 @@ class Client implements ClientInterface
         }
         $body = array('media' => $media->media());
         $url = self::FILE_API_URL_PREFIX . self::MEDIA_UPLOAD_URL . 'access_token=' . $this->access_token . '&type=' . $type;
-        $result = Helper::http_post($url, $body, true);
+        $result = Helper::httpPost($url, $body, true);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -156,7 +156,7 @@ class Client implements ClientInterface
             throw new RuntimeException('access_token不能为空');
         }
         $url = self::FILE_API_URL_PREFIX . self::MEDIA_GET_URL . 'access_token=' . $this->access_token . '&media_id=' . $media_id;
-        $result = Helper::http_get($url);
+        $result = Helper::httpGet($url);
         if ($result) {
             if ($json = json_decode($result, true)) {
                 $this->errcode = $json['errcode'];
@@ -198,7 +198,7 @@ class Client implements ClientInterface
             'description' => $desc,
         );
         $url = self::FILE_API_URL_PREFIX . self::UPLOAD_VIDEO_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -237,7 +237,7 @@ class Client implements ClientInterface
             $msg_type => $msg_data,
         );
         $url = self::API_URL_PREFIX . self::CUSTOM_SEND_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -271,7 +271,7 @@ class Client implements ClientInterface
             'articles' => $articles,
         );
         $url = self::API_URL_PREFIX . self::UPLOAD_ARTICLE_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -314,7 +314,7 @@ class Client implements ClientInterface
             )
         );
         $url = self::API_URL_PREFIX . self::MESSAGE_SENDGROUP_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($data));
+        $result = Helper::httpPost($url, Helper::jsonEncode($data));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -358,7 +358,7 @@ class Client implements ClientInterface
             )
         );
         $url = self::API_URL_PREFIX . self::MESSAGE_SENDUSER_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($data));
+        $result = Helper::httpPost($url, Helper::jsonEncode($data));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -387,7 +387,7 @@ class Client implements ClientInterface
         }
         $body = array('msg_id' => $msg_id);
         $url = self::API_URL_PREFIX . self::MESSAGE_DELETE_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -412,7 +412,7 @@ class Client implements ClientInterface
             throw new RuntimeException('access_token不能为空');
         }
         $url = self::API_URL_PREFIX . self::TEMPLATE_SEND_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, is_array($body) ? Helper::json_encode($body) : $body);
+        $result = Helper::httpPost($url, is_array($body) ? Helper::jsonEncode($body) : $body);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -455,7 +455,7 @@ class Client implements ClientInterface
             throw new RuntimeException('access_token不能为空');
         }
         $url = self::API_URL_PREFIX . self::USER_INFO_URL . 'access_token=' . $this->access_token . '&openid=' . $openid . '&lang=' . $lang;
-        $result = Helper::http_get($url);
+        $result = Helper::httpGet($url);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -486,7 +486,7 @@ class Client implements ClientInterface
         }
         $body = array('group' => array('name' => $name));
         $url = self::API_URL_PREFIX . self::GROUP_CREATE_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -515,7 +515,7 @@ class Client implements ClientInterface
             throw new RuntimeException('access_token不能为空');
         }
         $url = self::API_URL_PREFIX . self::GROUP_GET_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_get($url);
+        $result = Helper::httpGet($url);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -547,7 +547,7 @@ class Client implements ClientInterface
         }
         $body = array('openid' => $openid);
         $url = self::API_URL_PREFIX . self::USER_GROUP_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -580,7 +580,7 @@ class Client implements ClientInterface
         }
         $body = array('group' => array('id' => $groupid, 'name' => $name));
         $url = self::API_URL_PREFIX . self::GROUP_UPDATE_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -611,7 +611,7 @@ class Client implements ClientInterface
         }
         $body = array('openid' => $openid, 'to_groupid' => $to_groupid);
         $url = self::API_URL_PREFIX . self::GROUP_MEMBER_UPDATE_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -642,7 +642,7 @@ class Client implements ClientInterface
         }
         $body = array('openid' => $openid, 'remark' => $remark);
         $url = self::API_URL_PREFIX . self::USER_UPDATEREMARK_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -672,7 +672,7 @@ class Client implements ClientInterface
             throw new RuntimeException('access_token不能为空');
         }
         $url = self::API_URL_PREFIX . self::USER_GET_URL . 'access_token=' . $this->access_token . '&next_openid=' . $next_openid;
-        $result = Helper::http_get($url);
+        $result = Helper::httpGet($url);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -709,7 +709,7 @@ class Client implements ClientInterface
             throw new RuntimeException('access_tokenu不能为空');
         }
         $url = self::API_URL_PREFIX . self::MENU_CREATE_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, is_array($menu_data) ? Helper::json_encode($menu_data) : $menu_data);
+        $result = Helper::httpPost($url, is_array($menu_data) ? Helper::jsonEncode($menu_data) : $menu_data);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -739,7 +739,7 @@ class Client implements ClientInterface
             throw new RuntimeException('access_tokenu不能为空');
         }
         $url = self::API_URL_PREFIX . self::MENU_GET_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_get($url);
+        $result = Helper::httpGet($url);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -768,7 +768,7 @@ class Client implements ClientInterface
             throw new RuntimeException('access_tokenu不能为空');
         }
         $url = self::API_URL_PREFIX . self::MENU_DELETE_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_get($url);
+        $result = Helper::httpGet($url);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -811,7 +811,7 @@ class Client implements ClientInterface
             $body['expire_seconds'] = $expire;
         }
         $url = self::API_URL_PREFIX . self::QRCODE_CREATE_URL . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, Helper::json_encode($body));
+        $result = Helper::httpPost($url, Helper::jsonEncode($body));
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -854,7 +854,7 @@ class Client implements ClientInterface
         }
         $body = array('action' => $action, 'long_url' => $long_url);
         $url = self::API_URL_PREFIX . self::SHORTURL_CREATE . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, $body);
+        $result = Helper::httpPost($url, $body);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -888,7 +888,7 @@ class Client implements ClientInterface
         }
 
         $url = self::API_URL_PREFIX . self::CUSTOM_SERVICE_GET_RECORD . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, is_array($data) ? Helper::json_encode($data) : $data);
+        $result = Helper::httpPost($url, is_array($data) ? Helper::jsonEncode($data) : $data);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -919,7 +919,7 @@ class Client implements ClientInterface
         }
 
         $url = self::API_URL_PREFIX . self::CUSTOM_SERVICE_GET_KFLIST . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, is_array($data) ? Helper::json_encode($data) : $data);
+        $result = Helper::httpPost($url, is_array($data) ? Helper::jsonEncode($data) : $data);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
@@ -950,7 +950,7 @@ class Client implements ClientInterface
         }
 
         $url = self::API_URL_PREFIX . self::CUSTOM_SERVICE_GET_ONLINEKFLIST . 'access_token=' . $this->access_token;
-        $result = Helper::http_post($url, is_array($data) ? Helper::json_encode($data) : $data);
+        $result = Helper::httpPost($url, is_array($data) ? Helper::jsonEncode($data) : $data);
         if ($result) {
             $result = json_decode($result, true);
             if (!$result || empty($result)) {
