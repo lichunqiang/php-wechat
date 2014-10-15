@@ -386,9 +386,11 @@ class Shop implements ShopInterface
         if (empty($this->access_token)) {
             throw new RuntimeException('access_token不能为空');
         }
-        $body = array('filename' => $media->media());
+        // $body = array('filename' => $media->media());
+        //@see https://github.com/lichunqiang/php-wechat/issues/9
+        $body = file_get_contents($file_path);
         // $body = $media->media();
-        var_dump($body);
+        // var_dump($body);
         $url = self::API_URL_PREFIX . self::UPLOAD_IMG . 'access_token=' . $this->access_token . '&filename=' . basename($file_path);
         $result = Helper::httpPost($url, $body, true);
         if ($result) {
