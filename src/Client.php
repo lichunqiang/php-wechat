@@ -105,18 +105,7 @@ class Client implements ClientInterface
     //--------------------多媒体文件相关
 
     /**
-     * 上传多媒体文件
-     * 图片（image）: 128K，支持JPG格式
-     * 语音（voice）：256K，播放长度不超过60s，支持AMR\MP3格式
-     * 视频（video）：1MB，支持MP4格式
-     * 缩略图（thumb）：64KB，支持JPG格式
-     *
-     * 媒体文件在后台保存时间为3天，即3天后media_id失效。
-     * 返回->{"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
-     *
-     * @param string $file_path 文件的存放路径
-     * @param string $type 媒体文件类型: image, voice, video, thumb
-     * @return mixed
+     * @inheritdoc
      */
     public function uploadMedia($file_path, $type)
     {
@@ -943,7 +932,7 @@ class Client implements ClientInterface
      *
      * @return mixed;
      */
-    public function getCustomerServiceOnline()
+    public function getCustomerServiceOnline($data)
     {
         if (empty($this->access_token)) {
             throw new RuntimeException('access_token不能为空');
@@ -958,6 +947,35 @@ class Client implements ClientInterface
             }
 
             if (isset($result['errcode'])) {
+                $this->errmsg = $result['errmsg'];
+                $this->errcode = $result['errcode'];
+                return false;
+            }
+
+            return $result;
+        }
+        return false;
+    }
+
+    //----------------智能接口
+
+    /**
+     * @inheritdoc
+     */
+    public function semanticSearch(SemanticQuery $query)
+    {
+        if (empty($this->access_token)) {
+            throw new RuntimeException('access_token不能为空');
+        }
+        $url = API_SEMANTIC_URL_PREFIX . SEMANTIC_SEARCH . 'access_token=' . $this->access_token;
+        $result = Helper::httpPost($url, Helper::jsonEncode($query->getQuery()));
+        if ($result) {
+            $result = json_decode($result, true);
+            if (!$result || empty($result)) {
+                return false;
+            }
+
+            if ($result['errcode'] != 0) {
                 $this->errmsg = $result['errmsg'];
                 $this->errcode = $result['errcode'];
                 return false;
