@@ -6,10 +6,11 @@
 // +----------------------------------------------------------------------
 // | Author: Light <light-li@hotmail.com>
 // +----------------------------------------------------------------------
+require __DIR__ . '/../init.php';
 
-namespace Light\Wechat\Exceptions;
+$file = new \Light\Wechat\Utils\MediaFile('../fixture/panda1.jpg', 'thumb');
 
-class RuntimeException extends \Exception
-{
+//echo $file->getSize();
 
-}
+// echo 1024 * 1024;
+var_dump((string) $file);

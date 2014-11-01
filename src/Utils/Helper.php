@@ -10,148 +10,183 @@ namespace Light\Wechat\Utils;
 
 class Helper
 {
-	/**
-	 * 生成随机字串
-	 * @param int $len 默认为16最长为32
-	 * @return string
-	 */
-	public static function getNonceStr($len = 16)
-	{
-		if(!is_numeric($len) || $len > 32) {
-			$len = 16;
-		}
-		$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		$str = "";
-		for($i = 0; $i < $len; $i++)
-		{
-			$str .= $chars[mt_rand(0, strlen($chars) - 1)];
-		}
-		return $str;
-	}
-
-	/**
-	 * 微信api不支持中文转义的json结构
-	 * @param array $arr
-	 */
-	static function json_encode($arr) {
-		$parts = array ();
-		$is_list = false;
-		//Find out if the given array is a numerical array
-		$keys = array_keys ( $arr );
-		$max_length = count ( $arr ) - 1;
-		if (($keys [0] === 0) && ($keys [$max_length] === $max_length )) { //See if the first key is 0 and last key is length - 1
-			$is_list = true;
-			for($i = 0; $i < count ( $keys ); $i ++) { //See if each key correspondes to its position
-				if ($i != $keys [$i]) { //A key fails at position check.
-					$is_list = false; //It is an associative array.
-					break;
-				}
-			}
-		}
-		foreach ( $arr as $key => $value ) {
-			if (is_array ( $value )) { //Custom handling for arrays
-				if ($is_list)
-					$parts [] = self::json_encode ( $value ); /* :RECURSION: */
-				else
-					$parts [] = '"' . $key . '":' . self::json_encode ( $value ); /* :RECURSION: */
-			} else {
-				$str = '';
-				if (! $is_list)
-					$str = '"' . $key . '":';
-				//Custom handling for multiple data types
-				if (is_numeric ( $value ) && $value<2000000000)
-					$str .= $value; //Numbers
-				elseif ($value === false)
-				$str .= 'false'; //The booleans
-				elseif ($value === true)
-				$str .= 'true';
-				else
-					$str .= '"' . addslashes ( $value ) . '"'; //All other things
-				// :TODO: Is there any more datatype we should be in the lookout for? (Object?)
-				$parts [] = $str;
-			}
-		}
-		$json = implode ( ',', $parts );
-		if ($is_list)
-			return '[' . $json . ']'; //Return numerical JSON
-		return '{' . $json . '}'; //Return associative JSON
-	}
-
-	/**
-	 * GET 请求
-	 * @param string $url
-	 */
-	static function http_get($url){
-		$oCurl = \curl_init();
-		if(stripos($url,"https://")!==FALSE){
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, FALSE);
-		}
-		curl_setopt($oCurl, CURLOPT_URL, $url);
-		curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
-		$sContent = curl_exec($oCurl);
-		$aStatus = curl_getinfo($oCurl);
-		curl_close($oCurl);
-		if(intval($aStatus["http_code"])==200){
-			return $sContent;
-		}else{
-			return false;
-		}
-	}
-	/**
-	 * POST 请求
-	 * @param string $url
-	 * @param array $param
-	 * @param boolean is upload file action
-	 * @return string content
-	 */
-	static function http_post($url, $param, $is_upload = FALSE){
-		$oCurl = \curl_init();
-		if(stripos($url,"https://")!==FALSE){
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
-		}
-		if (is_string($param) || $is_upload) {
-			$strPOST = $param;
-		} else {
-			$aPOST = array();
-			foreach($param as $key=>$val){
-				$aPOST[] = $key."=".urlencode($val);
-			}
-			$strPOST =  join("&", $aPOST);
-		}
-		curl_setopt($oCurl, CURLOPT_URL, $url);
-		curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt($oCurl, CURLOPT_POST,true);
-		curl_setopt($oCurl, CURLOPT_POSTFIELDS,$strPOST);
-		$sContent = curl_exec($oCurl);
-		$aStatus = curl_getinfo($oCurl);
-		curl_close($oCurl);
-		if(intval($aStatus["http_code"])==200){
-			return $sContent;
-		}else{
-			return false;
-		}
-	}
-
-	/**
-	 * 将数组信息转化为xml
-	 * @param array  $arr 提交的数组信息
-	 * @return string 转化后的xml
-	 */
-	public static function arrayToXml($arr)
+    /**
+     * 生成随机字串
+     * @param int $len 默认为16最长为32
+     * @return string
+     */
+    public static function getNonceStr($len = 16)
     {
-    	if(!is_array($arr)) return '';
+        if (!is_numeric($len) || $len > 32) {
+            $len = 16;
+        }
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        $str = "";
+        for ($i = 0; $i < $len; $i++) {
+            $str .= $chars[mt_rand(0, strlen($chars) - 1)];
+        }
+        return $str;
+    }
+
+    /**
+     * 微信api不支持中文转义的json结构
+     * 5.4.0 json_encode 增加了JSON_UNESCAPED_UNICODE
+     * @see http://cn2.php.net/manual/en/function.json-encode.php
+     *
+     * @param array $arr
+     */
+    public static function jsonEncode($arr)
+    {
+        //TODO::这么做合适么
+        if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
+            return json_encode($arr, JSON_UNESCAPED_UNICODE);
+        }
+
+        $is_list = false;
+        //Find out if the given array is a numerical array
+        $keys = array_keys($arr);
+        $max_length = count($arr) - 1;
+        if (($keys[0] === 0) && ($keys[$max_length] === $max_length)) {
+//See if the first key is 0 and last key is length - 1
+            $is_list = true;
+            for ($i = 0; $i < count($keys);
+                $i++) {
+//See if each key correspondes to its position
+                if ($i != $keys[$i]) {
+//A key fails at position check.
+                    $is_list = false;//It is an associative array.
+                    break;
+                }
+            }
+        }
+        foreach ($arr as $key => $value) {
+            if (is_array($value)) {
+//Custom handling for arrays
+                if ($is_list) {
+                    $parts[] = self::json_encode($value);
+                }
+                /* :RECURSION: */
+                else{
+
+                    $parts[] = '"' . $key . '":' . self::json_encode($value);
+                }
+                /* :RECURSION: */
+            } else {
+                $str = '';
+                if (!$is_list) {
+                    $str = '"' . $key . '":';
+                }
+
+                //Custom handling for multiple data types
+                if (is_numeric($value) && $value < 2000000000) {
+                    $str .= $value;
+                }
+                //Numbers
+                elseif ($value === false) {
+                    $str .= 'false';
+                }
+                //The booleans
+                elseif ($value === true) {
+                    $str .= 'true';
+                } else {
+
+                    $str .= '"' . addslashes($value) . '"';
+                }
+                //All other things
+                // :TODO: Is there any more datatype we should be in the lookout for? (Object?)
+                $parts[] = $str;
+            }
+        }
+        $json = implode(',', $parts);
+        if ($is_list) {
+            return '[' . $json . ']';
+        }
+        //Return numerical JSON
+        return '{' . $json . '}';//Return associative JSON
+    }
+
+    /**
+     * GET 请求
+     * @param string $url
+     */
+    public static function httpGet($url)
+    {
+        $oCurl = \curl_init();
+        if (stripos($url, "https://") !== false) {
+            curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($oCurl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
+        }
+        curl_setopt($oCurl, CURLOPT_URL, $url);
+        curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
+        $sContent = curl_exec($oCurl);
+        $aStatus = curl_getinfo($oCurl);
+        curl_close($oCurl);
+        if (intval($aStatus["http_code"]) == 200) {
+            return $sContent;
+        } else {
+            return false;
+        }
+    }
+    /**
+     * POST 请求
+     * 5.5.0不支持@file形式，增加了CURLFile
+     * @param string $url
+     * @param array $param
+     * @param boolean is upload file action
+     * @return string content
+     */
+    public static function httpPost($url, $param, $is_upload = false)
+    {
+        $oCurl = \curl_init();
+        if (stripos($url, "https://") !== false) {
+            curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($oCurl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
+        }
+        if (is_string($param) || $is_upload) {
+            $strPOST = $param;
+        } else {
+            $aPOST = array();
+            foreach ($param as $key => $val) {
+                $aPOST[] = $key . "=" . urlencode($val);
+            }
+            $strPOST = join("&", $aPOST);
+        }
+        curl_setopt($oCurl, CURLOPT_URL, $url);
+        curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($oCurl, CURLOPT_POST, true);
+        curl_setopt($oCurl, CURLOPT_POSTFIELDS, $strPOST);
+        $sContent = curl_exec($oCurl);
+        $aStatus = curl_getinfo($oCurl);
+        curl_close($oCurl);
+        if (intval($aStatus["http_code"]) == 200) {
+            return $sContent;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 将数组信息转化为xml
+     * @param array  $arr 提交的数组信息
+     * @return string 转化后的xml
+     */
+    public static function arrayToXml($arr)
+    {
+        if (!is_array($arr)) {
+            return '';
+        }
 
         $xml = "<xml>";
-        foreach ($arr as $key=>$val) {
-        	 if (is_numeric($val)) {
-        	 	$xml.="<".$key.">".$val."</".$key.">";
-        	 } else {
-        	 	$xml.="<".$key."><![CDATA[".$val."]]></".$key.">";
-        	 }
+        foreach ($arr as $key => $val) {
+            if (is_numeric($val)) {
+                $xml .= "<" . $key . ">" . $val . "</" . $key . ">";
+            } else {
+                $xml .= "<" . $key . "><![CDATA[" . $val . "]]></" . $key . ">";
+            }
         }
-        $xml.="</xml>";
+        $xml .= "</xml>";
         return $xml;
     }
 
@@ -162,8 +197,8 @@ class Helper
      */
     public static function xmlToArray($xml)
     {
-    	$arr = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
-    	return json_decode(json_encode($arr), true);
+        $arr = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
+        return json_decode(json_encode($arr), true);
     }
 
     /**
@@ -176,14 +211,14 @@ class Helper
      */
     public static function formatQueryParamMap($param, $urlencode = false)
     {
-    	$buff = array();
-    	foreach ($param as $key => $value) {
-    		if(null !== $value && 'null' != $value
-    			&& '' != $value && 'sign' != $key) {
-    			$buff[] = $key . '=' . ($urlencode ? rawurlencode($value) : $value);
-    		}
-    	}
-    	return implode('&', $buff);
+        $buff = array();
+        foreach ($param as $key => $value) {
+            if (null !== $value && 'null' != $value
+                 && '' != $value && 'sign' != $key) {
+                $buff[] = $key . '=' . ($urlencode ? rawurlencode($value) : $value);
+            }
+        }
+        return implode('&', $buff);
     }
 
     /**
@@ -194,11 +229,11 @@ class Helper
      */
     public static function formatBizQueryParamMap($param, $urlencode = false)
     {
-    	$buff = array();
-    	foreach ($param as $key => $value) {
-    		$buff[] = $key . '=' . ($urlencode ? rawurlencode($value) : $value);
-    	}
-    	return implode('&', $buff);
+        $buff = array();
+        foreach ($param as $key => $value) {
+            $buff[] = $key . '=' . ($urlencode ? rawurlencode($value) : $value);
+        }
+        return implode('&', $buff);
     }
 
     /**
@@ -209,6 +244,6 @@ class Helper
      */
     public static function md5Sign($partner_key, $body)
     {
-    	return strtoupper(md5($body . '&key=' . $partner_key));
+        return strtoupper(md5($body . '&key=' . $partner_key));
     }
 }

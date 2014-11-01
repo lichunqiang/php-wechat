@@ -118,7 +118,7 @@ class Client implements ClientInterface
 	public function createDepartment($name, $parentid = 1, $order = 1)
 	{
 		$body = array('name' => $name, 'parentid' => $parentid, 'order' => $order);
-		$result = Helper::http_post(self::API_URL_PREFIX . self::DEPARTMENT_CREATE . 'access_token=' . $this->access_token, Helper::json_encode($body));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::DEPARTMENT_CREATE . 'access_token=' . $this->access_token, Helper::jsonEncode($body));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -148,7 +148,7 @@ class Client implements ClientInterface
 		if($name) {
 			$body['name'] = $name;
 		}
-		$result = Helper::http_post(self::API_URL_PREFIX . self::DEPARTMENT_UPDATE . 'access_token=' . $this->access_token, Helper::json_encode($body));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::DEPARTMENT_UPDATE . 'access_token=' . $this->access_token, Helper::jsonEncode($body));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -237,7 +237,7 @@ class Client implements ClientInterface
 		if(!empty($attrs) && is_array($attrs)) {
 			$body = array_merge($body, $attrs);
 		}
-		$result = Helper::http_post(self::API_URL_PREFIX . self::USER_CREATE . 'access_token=' . $this->access_token, Helper::json_encode($body));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::USER_CREATE . 'access_token=' . $this->access_token, Helper::jsonEncode($body));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -275,7 +275,7 @@ class Client implements ClientInterface
 		if(!empty($attrs) && is_array($attrs)) {
 			$body = array_merge($body, $attrs);
 		}
-		$result = Helper::http_post(self::API_URL_PREFIX . self::USER_UPDATE . 'access_token=' . $this->access_token, Helper::json_encode($body));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::USER_UPDATE . 'access_token=' . $this->access_token, Helper::jsonEncode($body));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -390,8 +390,8 @@ class Client implements ClientInterface
 	public function createTag($tag_name)
 	{
 		$body = array('tagname' => $tag_name);
-		$result = Helper::http_post(self::API_URL_PREFIX . self::TAG_CREATE . 'access_token=' . $this->access_token,
-									Helper::json_encode($body));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::TAG_CREATE . 'access_token=' . $this->access_token,
+									Helper::jsonEncode($body));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -417,8 +417,8 @@ class Client implements ClientInterface
 	public function updateTagName($tag_id, $tag_name)
 	{
 		$body = array('tagid' => $tag_id, 'tagname' => $tag_name);
-		$result = Helper::http_post(self::API_URL_PREFIX . self::TAG_UPDATE . 'access_token=' . $this->access_token,
-									Helper::json_encode($body));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::TAG_UPDATE . 'access_token=' . $this->access_token,
+									Helper::jsonEncode($body));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -496,8 +496,8 @@ class Client implements ClientInterface
 			return false;
 		}
 		$body = array('tagid' => $tag_id, 'userlist' => $user_list);
-		$result = Helper::http_post(self::API_URL_PREFIX . self::TAG_ADD_USER . 'access_token=' . $this->access_token,
-									Helper::json_encode($body));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::TAG_ADD_USER . 'access_token=' . $this->access_token,
+									Helper::jsonEncode($body));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -527,8 +527,8 @@ class Client implements ClientInterface
 			return false;
 		}
 		$body = array('tagid' => $tag_id, 'userlist' => $user_list);
-		$result = Helper::http_post(self::API_URL_PREFIX . self::TAG_DEL_USER . 'access_token=' . $this->access_token,
-									Helper::json_encode($body));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::TAG_DEL_USER . 'access_token=' . $this->access_token,
+									Helper::jsonEncode($body));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -563,7 +563,7 @@ class Client implements ClientInterface
 	public function uploadMedia($media, $type)
 	{
 		$body = array('media' => $media, 'type' => $type);
-		$result = Helper::http_post(self::API_URL_PREFIX . self::MEDIA_UPLOAD .'access_token=' . $this->access_token, $body, true);
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::MEDIA_UPLOAD .'access_token=' . $this->access_token, $body, true);
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -629,8 +629,8 @@ class Client implements ClientInterface
 	 */
 	public function sendMessage($msg_body)
 	{
-		$result = Helper::http_post(self::API_URL_PREFIX . self::MSG_SEND . 'access_token=' . $this->access_token,
-									Helper::json_encode($msg_body));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::MSG_SEND . 'access_token=' . $this->access_token,
+									Helper::jsonEncode($msg_body));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
@@ -658,8 +658,8 @@ class Client implements ClientInterface
 	 */
 	public function createMenu($menu)
 	{
-		$result = Helper::http_post(self::API_URL_PREFIX . self::MENU_CREATE . 'access_token=' . $this->access_token . '&agentid=' . $this->agentid,
-									Helper::json_encode($menu));
+		$result = Helper::httpPost(self::API_URL_PREFIX . self::MENU_CREATE . 'access_token=' . $this->access_token . '&agentid=' . $this->agentid,
+									Helper::jsonEncode($menu));
 		if($result) {
 			$result = json_decode($result, true);
 			if(!$result || empty($result))
