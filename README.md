@@ -1,7 +1,7 @@
 About
 ---------------
 
-[![Build Status](https://secure.travis-ci.org/lichunqiang/php-wechat.png)](http://travis-ci.org/lichunqiang/php-wechat)
+[![Build Status](https://travis-ci.org/lichunqiang/php-wechat.svg?branch=2.0.0)](http://travis-ci.org/lichunqiang/php-wechat)
 
 [developing]this is 2.0.0 branch
 

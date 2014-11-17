@@ -9,6 +9,8 @@ php:
 # faster builds on new travis setup not using sudo
 sudo: false
 
+git:
+  submodules: false
 
 # cache vendor dirs
 cache:
