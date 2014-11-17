@@ -985,4 +985,30 @@ class Client implements ClientInterface
         }
         return false;
     }
+    /**
+     * @inheritdoc
+     */
+    public function getWechatServerIPList()
+    {
+        if (empty($this->access_token)) {
+            throw new RuntimeException('access_token不能为空');
+        }
+        $url = self::API_URL_PREFIX . self::GET_IP_LIST . 'access_token=' . $this->access_token;
+        $result = Helper::httpGet($url);
+        if ($result) {
+            $result = json_decode($result, true);
+            if (!$result || empty($result)) {
+                return false;
+            }
+
+            if (isset($result['errcode'])) {
+                $this->errmsg = $result['errmsg'];
+                $this->errcode = $result['errcode'];
+                return false;
+            }
+
+            return $result['ip_list'];
+        }
+        return false;
+    }
 }

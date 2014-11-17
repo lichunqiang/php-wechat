@@ -57,6 +57,8 @@ interface ClientInterface
     const CUSTOM_SERVICE_GET_KFLIST = '/customservice/getkflist?';
     const CUSTOM_SERVICE_GET_ONLINEKFLIST = '/customservice/getkflist?';
 
+    const GET_IP_LIST = '/getcallbackip?';
+
     /**
      * 使用AppID和AppSecret调用本接口来获取access_token
      *
@@ -323,4 +325,11 @@ interface ClientInterface
     //----------------智能接口
 
     public function semanticSearch(\Light\Wechat\SemanticQuery $query);
+
+    /**
+     * get Wechat server ip list
+     *
+     * @return array wechat server ip list
+     */
+    public function getWechatServerIPList();
 }
