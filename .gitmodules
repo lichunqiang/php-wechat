@@ -1,3 +1,6 @@
 [submodule "WeixinApi"]
 	path = WeixinApi
 	url = git@github.com:zxlie/WeixinApi.git
+[submodule "php-wechat.wiki"]
+	path = php-wechat.wiki
+	url = git@github.com:lichunqiang/php-wechat.wiki.git
