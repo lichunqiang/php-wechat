@@ -47,13 +47,12 @@ class Helper
         $keys = array_keys($arr);
         $max_length = count($arr) - 1;
         if (($keys[0] === 0) && ($keys[$max_length] === $max_length)) {
-//See if the first key is 0 and last key is length - 1
+            //See if the first key is 0 and last key is length - 1
             $is_list = true;
-            for ($i = 0; $i < count($keys);
-                $i++) {
-//See if each key correspondes to its position
+            for ($i = 0; $i < count($keys); $i++) {
+                //See if each key correspondes to its position
                 if ($i != $keys[$i]) {
-//A key fails at position check.
+                    //A key fails at position check.
                     $is_list = false;//It is an associative array.
                     break;
                 }
@@ -61,16 +60,13 @@ class Helper
         }
         foreach ($arr as $key => $value) {
             if (is_array($value)) {
-//Custom handling for arrays
+                //Custom handling for arrays
                 if ($is_list) {
                     $parts[] = self::json_encode($value);
-                }
-                /* :RECURSION: */
-                else{
+                } else {
 
                     $parts[] = '"' . $key . '":' . self::json_encode($value);
                 }
-                /* :RECURSION: */
             } else {
                 $str = '';
                 if (!$is_list) {
