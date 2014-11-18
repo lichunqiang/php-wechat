@@ -62,10 +62,10 @@ class Helper
             if (is_array($value)) {
                 //Custom handling for arrays
                 if ($is_list) {
-                    $parts[] = self::json_encode($value);
+                    $parts[] = self::jsonEncode($value);
                 } else {
 
-                    $parts[] = '"' . $key . '":' . self::json_encode($value);
+                    $parts[] = '"' . $key . '":' . self::jsonEncode($value);
                 }
             } else {
                 $str = '';
