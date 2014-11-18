@@ -14,9 +14,14 @@
     },
     "require-dev":{
         "monolog/monolog": "*",
-        "aferrandini/phpqrcode": "1.0.1"
+        "aferrandini/phpqrcode": "1.0.1",
+        "phpunit/phpunit": "4.3.*"
     },
     "autoload": {
         "psr-4": {"Light\\Wechat\\": "src"}
-    }
+    },
+     "repositories": [
+        {"type": "composer", "url": "http://pkg.phpcomposer.com/repo/packagist/"},
+        {"packagist": false}
+    ]
 }
